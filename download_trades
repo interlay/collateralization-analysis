@@ -1,0 +1,12 @@
+#!/bin/bash
+
+for i in {8..8}
+do
+    archive_name=""$1"USDT-trades-2021-0"$i".zip"
+    echo "Downloading $archive_name"
+    wget "https://data.binance.vision/data/spot/monthly/trades/"$1"USDT/"$archive_name""
+    unzip $archive_name -d .
+    # rm $archive_name
+done
+cat "$1USDT"*.csv > "$1_trades.csv"
+rm "$1USDT"*.csv
