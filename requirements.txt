@@ -1,0 +1,9 @@
+lesscpy
+jupyter
+notebook
+jupyterlab
+seaborn
+matplotlib
+numpy
+pandas
+sklearn
