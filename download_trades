@@ -13,5 +13,6 @@ do
     unzip $archive_name -d .
     rm $archive_name
 done
+mkdir -p "./data/trades"
 cat "$1USDT"*.csv > "data/trades/$1_trades.csv"
 rm "$1USDT"*.csv
