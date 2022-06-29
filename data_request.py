@@ -70,7 +70,7 @@ class Token_Pair():
         shift_period = shift_periods[period]
 
         if type == "geometric":
-            self.returns = self.prices.pct_change(periods=shift_period, fill_method="bfill")
+            self.returns = self.prices.pct_change(periods=shift_period, fill_method="bfill").dropna()
 
 
 class Data_Request():
