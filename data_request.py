@@ -19,14 +19,6 @@ class Token():
     def ticker(self) -> str:
         return self._ticker
 
-    @property
-    def prices(self) -> pd.DataFrame:
-        return self._prices
-
-    @prices.setter
-    def prices(self, prices: pd.DataFrame):
-        self._prices = prices
-
 
 class Token_Pair():
     def __init__(self, base_token: Token, quote_token: Token) -> None:
@@ -47,13 +39,9 @@ class Token_Pair():
     def prices(self) -> pd.DataFrame:
         return self._prices
 
-    # @prices.setter
-    # def prices(self, prices: pd.DataFrame) -> None:
-    #     self._prices = prices
-
-    @property
-    def prices(self) -> pd.DataFrame:
-        return self._prices
+    @prices.setter
+    def prices(self, prices: pd.DataFrame) -> None:
+        self._prices = prices
 
     @property
     def returns(self) -> pd.DataFrame:
@@ -70,7 +58,7 @@ class Token_Pair():
         request = Data_Request(self, data_source, start_date, end_date)
         prices = request.request_historic_prices()
         # fails here for some reason?!
-        self._prices = prices
+        self.prices = prices
 
     def calculate_returns(self, type: str = "geometric", period: str = "daily") -> None:
         shift_periods = {

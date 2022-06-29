@@ -20,6 +20,8 @@ pair.get_prices(start_date="2022-01-01")
 pair.calculate_returns()
 
 simple_analysis = Analysis(pair)
+
+
 #%%
 simple_analysis.plot_returns("Percentage", "Performance")
 
