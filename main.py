@@ -22,26 +22,23 @@ pair.get_prices(start_date="2022-01-01")
 pair.calculate_returns()
 
 simple_analysis = Analysis(pair)
-
-
-# %%
 simple_analysis.plot_returns("Percentage", "Performance")
 
 
 # %%
-sim = Simulation(pair, strategy="GMB")
-sim.simulate(steps=365, maturity=3, n_simulations=10)
+sim = Simulation(pair, strategy="merton_jump_diffusion")
+sim.simulate(steps=365, maturity=3, n_simulations=5)
 
 
 # %%
 # plot all paths for the both processes
-lenght = len(sim.paths)
+length = sim.paths.shape[1]
 f, subPlots = plt.subplots(sharex=True)
 plt.rcParams['figure.figsize'] = [16.0, 10.0]
-f.suptitle('Path simulations n=' + str(lenght))
+f.suptitle('Path simulations n=' + str(length))
 subPlots.set_title('Geometric Brownian Motion')
 
-for i in range(lenght):
+for i in range(length):
     path = sim.paths.iloc[:, i]
     subPlots.plot(path)
 
