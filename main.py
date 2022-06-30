@@ -30,16 +30,19 @@ simple_analysis.plot_returns("Percentage", "Performance")
 
 # %%
 sim = Simulation(pair, strategy="GMB")
-sim.simulate()
+sim.simulate(steps=365, maturity=3, n_simulations=10)
 
 
 # %%
 # plot all paths for the both processes
-f, subPlots = plt.subplots(2, sharex=True)
+lenght = len(sim.paths)
+f, subPlots = plt.subplots(sharex=True)
 plt.rcParams['figure.figsize'] = [16.0, 10.0]
-f.suptitle('Path simulations n=' + str(nPaths))
-subPlots[0].set_title('Geometric Brownian Motion')
+f.suptitle('Path simulations n=' + str(lenght))
+subPlots.set_title('Geometric Brownian Motion')
 
-for i in range(gbm_paths.shape[0]):
-    path = gbm_paths[i, :]
-    subPlots[1].plot(timeGrid, path)
+for i in range(lenght):
+    path = sim.paths.iloc[:, i]
+    subPlots.plot(path)
+
+# %%
