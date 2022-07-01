@@ -54,11 +54,22 @@ class Token_Pair():
 
     # Functions
 
-    def get_prices(self, data_source: str = "coingecko", start_date: str = None, end_date: str = None) -> None:
+    def get_prices(self, data_source: str = "coingecko", start_date: str = None, end_date: str = None, inverse: bool=False) -> None:
+        """Requests the prices from 'source' 
+
+        Args:
+            data_source (str, optional): Source to get the data from. Defaults to "coingecko".
+            start_date (str, optional): Start date as string in the format '%Y-%m-%d'. If none is given, the start date will be the end date - 365 days. Defaults to None.
+            end_date (str, optional): End date as string in the format '%Y-%m-%d'. If none is given, it will default to today. Defaults to None.
+            inverse (bool, optional): Coingecko does not support every token as quote currency. For exotic tokens as quote currency, this must be set to true so that the prices will be inverted. Defaults to False.
+        """
+        
         request = Data_Request(self, data_source, start_date, end_date)
         prices = request.request_historic_prices()
-        # fails here for some reason?!
-        self.prices = prices
+        if not inverse:
+            self.prices = prices
+        else:
+            self.prices = 1 / prices
 
     def calculate_returns(self, type: str = "geometric", period: str = "daily") -> None:
         shift_periods = {

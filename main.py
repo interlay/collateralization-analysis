@@ -8,17 +8,43 @@
 # 3.1. Add the token pair to the simulation
 # 3.2 Add the strategy to the simulation
 # 3.3 Run the simulation
+
+
+
+"""
+Liquidation process:
+    1. Off-chain worker trigger liquidation and vault seizes collateral
+    2. A third party can now burn iBTC to receive the collateral
+        2.1 Buy iBTC
+        2.2 Burn iBTC
+        2.3 Receive collateral
+    3. (Optional) Swap collateral into other currency
+
+
+Modelling:
+    1. Seizure of collateral: Nothing
+    2. Liquidating the collateral
+        2.1 Buy iBTC: Model the liquidity needed to buy the total amount if iBTC oustanding
+            2.1.1 Model the slippage of DEX
+            2.1.2 Model the slippage of a CEX # is it fair to assume that
+            
+"""
+
+
+
+
+
 # %%
 from data_request import Token, Token_Pair, Data_Request
 from analysis import Analysis
 from simulation import Simulation
 from matplotlib import pyplot as plt
 
-quote_currency = Token("USD", "USD")
-base_currncy = Token("kintsugi", "KINT")
+quote_currency = Token("btc", "BTC")
+base_currency = Token("acala-dollar", "aUSD")
 
-pair = Token_Pair(base_currncy, quote_currency)
-pair.get_prices(start_date="2022-01-01")
+pair = Token_Pair(base_currency, quote_currency)
+pair.get_prices(inverse=True)
 pair.calculate_returns()
 
 simple_analysis = Analysis(pair)

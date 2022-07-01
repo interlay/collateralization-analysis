@@ -14,22 +14,20 @@ def parse_date_to_quantlib(date: pd.Timestamp) -> ql.Date:
 # TODO: Can this be generalized so that all processes can use this function for creating a path generator?
 def path_generator(process, maturity, nSteps):
     if isinstance(process, ql.GeometricBrownianMotionProcess):
-        generator = ql.UniformRandomGenerator()
         sequenceGenerator = ql.UniformRandomSequenceGenerator(
-            nSteps, generator)
+            nSteps, ql.UniformRandomGenerator())
         gaussianSequenceGenerator = ql.GaussianRandomSequenceGenerator(
             sequenceGenerator)
         path_generator = ql.GaussianPathGenerator(
             process, maturity, nSteps, gaussianSequenceGenerator, False)
 
     elif isinstance(process, ql.Merton76Process):
-        generator = ql.UniformRandomGenerator()
         sequenceGenerator = ql.UniformRandomSequenceGenerator(
-            nSteps, generator)
-        rng = ql.UniformRandomSequenceGenerator(ql.UniformRandomGenerator())
-        sequenceGenerator = ql.GaussianRandomSequenceGenerator(rng)
-        pathGenerator = ql.GaussianMultiPathGenerator(
-            process, sequenceGenerator, False)
+            nSteps, ql.UniformRandomGenerator())
+        rng = ql.UniformRandomSequenceGenerator(sequenceGenerator)
+        gaussianSequenceGenerator = ql.GaussianRandomSequenceGenerator(rng)
+        path_generator = ql.GaussianMultiPathGenerator(
+            process, gaussianSequenceGenerator, False)
 
     return path_generator
 
