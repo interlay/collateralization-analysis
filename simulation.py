@@ -16,21 +16,12 @@ def path_generator(process, maturity, nSteps):
     dimensions = process.factors()
     times = ql.TimeGrid(maturity, nSteps)
 
-    if isinstance(process, ql.GeometricBrownianMotionProcess):
-        unifrom_sequence_generator = ql.UniformRandomSequenceGenerator(
-            nSteps, ql.UniformRandomGenerator())
-        gaussian_sequence_generator = ql.GaussianRandomSequenceGenerator(
-            unifrom_sequence_generator)
-        path_generator = ql.GaussianMultiPathGenerator(
-            process, list(times), gaussian_sequence_generator, False)
-
-    elif isinstance(process, ql.Merton76Process):
-        unifrom_sequence_generator = ql.UniformRandomSequenceGenerator(
-            dimensions * nSteps, ql.UniformRandomGenerator())
-        gaussian_sequence_generator = ql.GaussianRandomSequenceGenerator(
-            unifrom_sequence_generator)
-        path_generator = ql.GaussianMultiPathGenerator(
-            process, list(times), gaussian_sequence_generator, False)
+    unifrom_sequence_generator = ql.UniformRandomSequenceGenerator(
+        dimensions * nSteps, ql.UniformRandomGenerator())
+    gaussian_sequence_generator = ql.GaussianRandomSequenceGenerator(
+        unifrom_sequence_generator)
+    path_generator = ql.GaussianMultiPathGenerator(
+        process, list(times), gaussian_sequence_generator, False)
 
     return path_generator
 
@@ -48,21 +39,34 @@ class Simulation():
     def token_pair(self) -> Token_Pair:
         return self._token_pair
 
+    def black_process(self):
+        riskFreeTS = ql.YieldTermStructureHandle(ql.FlatForward(
+            self._params["start_date"], 0.05, ql.Actual365Fixed()))
+        volTS = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(
+            self._params["start_date"], ql.NullCalendar(), self._params["sigma"], ql.Actual365Fixed()))
+        return ql.BlackProcess(self._params["initial_value"], riskFreeTS, volTS)
+
     def geometric_brownian_motion(self) -> ql.GeometricBrownianMotionProcess:
         return ql.GeometricBrownianMotionProcess(
-            # fails for some reason due to the initial value type mismatch
+            # I dont understand why this fails without .value()
             self._params["initial_value"].value(), self._params["mu"], self._params["sigma"])
+
+    def heston_process(self) -> ql.Merton76Process:
+        riskFreeTS = ql.YieldTermStructureHandle(
+            ql.FlatForward(self._params["start_date"], 0.05, ql.Actual365Fixed()))
+        dividendTS = ql.YieldTermStructureHandle(
+            ql.FlatForward(self._params["start_date"], 0.01, ql.Actual365Fixed()))
+
+        v0, kappa, theta, rho, sigma = 0.005, 0.8, 0.008, 0.2, self._params["sigma"]
+        return ql.HestonProcess(riskFreeTS, dividendTS, self._params["initial_value"], v0, kappa, theta, sigma, rho)
 
     def merton_jump_diffusion(self) -> ql.Merton76Process:
         dividendTS = ql.YieldTermStructureHandle(
             ql.FlatForward(self._params["start_date"], 0.01, ql.Actual365Fixed()))
-
         riskFreeTS = ql.YieldTermStructureHandle(
             ql.FlatForward(self._params["start_date"], 0.01, ql.Actual365Fixed()))
         volTS = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(
             self._params["start_date"], ql.NullCalendar(), self._params["sigma"], ql.Actual365Fixed()))
-        process = ql.BlackProcess(
-            self._params["initial_value"].value(), riskFreeTS, volTS)
 
         jumpIntensity = ql.QuoteHandle(ql.SimpleQuote(1.0))
         jumpVolatility = ql.QuoteHandle(ql.SimpleQuote(
@@ -112,10 +116,39 @@ class Simulation():
             process = self.merton_jump_diffusion()
 
             for step in range(n_simulations):
+                # path generator can be taken out of this loop, same above, maybe this can be refactured further...
                 _path_generator = path_generator(
                     process, maturity, self._params["total_steps"])
                 path = _path_generator.next().value()
-                self._params["_paths"].append([path[i]
+                self._params["_paths"].append([path[0][i]
+                                               for i in range(self._params["total_steps"] + 1)])
+
+            # TODO: Should this rather be stored in token_pair to make it easier to use with the analysis package?
+            self.paths = pd.DataFrame(self._params["_paths"]).transpose()
+
+        elif self.strategy == "heston_process":
+            process = self.heston_process()
+
+            for step in range(n_simulations):
+                # path generator can be taken out of this loop, same above, maybe this can be refactured further...
+                _path_generator = path_generator(
+                    process, maturity, self._params["total_steps"])
+                path = _path_generator.next().value()
+                self._params["_paths"].append([path[0][i]
+                                               for i in range(self._params["total_steps"] + 1)])
+
+            # TODO: Should this rather be stored in token_pair to make it easier to use with the analysis package?
+            self.paths = pd.DataFrame(self._params["_paths"]).transpose()
+
+        elif self.strategy == "black_process":
+            process = self.black_process()
+
+            for step in range(n_simulations):
+                # path generator can be taken out of this loop, same above, maybe this can be refactured further...
+                _path_generator = path_generator(
+                    process, maturity, self._params["total_steps"])
+                path = _path_generator.next().value()
+                self._params["_paths"].append([path[0][i]
                                                for i in range(self._params["total_steps"] + 1)])
 
             # TODO: Should this rather be stored in token_pair to make it easier to use with the analysis package?

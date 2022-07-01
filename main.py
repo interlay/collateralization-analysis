@@ -31,10 +31,9 @@ Modelling:
 
 
 # %%
-from data_request import Token, Token_Pair, Data_Request
+from data_request import Token, Token_Pair
 from analysis import Analysis
 from simulation import Simulation
-from matplotlib import pyplot as plt
 
 quote_currency = Token("btc", "BTC")
 base_currency = Token("acala-dollar", "aUSD")
@@ -43,9 +42,6 @@ pair = Token_Pair(base_currency, quote_currency)
 pair.get_prices()
 pair.calculate_returns()
 
-simple_analysis = Analysis(pair)
-simple_analysis.plot_returns("Percentage", "Performance")
-
 
 # %%
 sim = Simulation(pair, strategy="GMB")
@@ -53,15 +49,7 @@ sim.simulate(steps=365, maturity=3, n_simulations=5)
 
 
 # %%
-# plot all paths for the both processes
-length = sim.paths.shape[1]
-f, subPlots = plt.subplots(sharex=True)
-plt.rcParams['figure.figsize'] = [16.0, 10.0]
-f.suptitle('Path simulations n=' + str(length))
-subPlots.set_title('Geometric Brownian Motion')
-
-for i in range(length):
-    path = sim.paths.iloc[:, i]
-    subPlots.plot(path)
-
+# plot all paths for
+simple_analysis = Analysis(sim)
+simple_analysis.plot_returns("Percentage", "Performance", type="line")
 # %%
