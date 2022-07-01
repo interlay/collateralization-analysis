@@ -21,8 +21,8 @@ def path_generator(process, maturity, nSteps):
             nSteps, ql.UniformRandomGenerator())
         gaussian_sequence_generator = ql.GaussianRandomSequenceGenerator(
             unifrom_sequence_generator)
-        path_generator = ql.GaussianPathGenerator(
-            process, maturity, nSteps, gaussian_sequence_generator, False)
+        path_generator = ql.GaussianMultiPathGenerator(
+            process, list(times), gaussian_sequence_generator, False)
 
     elif isinstance(process, ql.Merton76Process):
         unifrom_sequence_generator = ql.UniformRandomSequenceGenerator(
@@ -102,7 +102,7 @@ class Simulation():
                 _path_generator = path_generator(
                     process, maturity, self._params["total_steps"])
                 path = _path_generator.next().value()
-                self._params["_paths"].append([path[i]
+                self._params["_paths"].append([path[0][i]
                                                for i in range(self._params["total_steps"] + 1)])
 
             # TODO: Should this rather be stored in token_pair to make it easier to use with the analysis package?
