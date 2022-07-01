@@ -10,7 +10,6 @@
 # 3.3 Run the simulation
 
 
-
 """
 Liquidation process:
     1. Off-chain worker trigger liquidation and vault seizes collateral
@@ -31,9 +30,6 @@ Modelling:
 """
 
 
-
-
-
 # %%
 from data_request import Token, Token_Pair, Data_Request
 from analysis import Analysis
@@ -44,7 +40,7 @@ quote_currency = Token("btc", "BTC")
 base_currency = Token("acala-dollar", "aUSD")
 
 pair = Token_Pair(base_currency, quote_currency)
-pair.get_prices(inverse=True)
+pair.get_prices()
 pair.calculate_returns()
 
 simple_analysis = Analysis(pair)
@@ -52,7 +48,7 @@ simple_analysis.plot_returns("Percentage", "Performance")
 
 
 # %%
-sim = Simulation(pair, strategy="merton_jump_diffusion")
+sim = Simulation(pair, strategy="GMB")
 sim.simulate(steps=365, maturity=3, n_simulations=5)
 
 

@@ -13,21 +13,24 @@ def parse_date_to_quantlib(date: pd.Timestamp) -> ql.Date:
 
 # TODO: Can this be generalized so that all processes can use this function for creating a path generator?
 def path_generator(process, maturity, nSteps):
+    dimensions = process.factors()
+    times = ql.TimeGrid(maturity, nSteps)
+
     if isinstance(process, ql.GeometricBrownianMotionProcess):
-        sequenceGenerator = ql.UniformRandomSequenceGenerator(
+        unifrom_sequence_generator = ql.UniformRandomSequenceGenerator(
             nSteps, ql.UniformRandomGenerator())
-        gaussianSequenceGenerator = ql.GaussianRandomSequenceGenerator(
-            sequenceGenerator)
+        gaussian_sequence_generator = ql.GaussianRandomSequenceGenerator(
+            unifrom_sequence_generator)
         path_generator = ql.GaussianPathGenerator(
-            process, maturity, nSteps, gaussianSequenceGenerator, False)
+            process, maturity, nSteps, gaussian_sequence_generator, False)
 
     elif isinstance(process, ql.Merton76Process):
-        sequenceGenerator = ql.UniformRandomSequenceGenerator(
-            nSteps, ql.UniformRandomGenerator())
-        rng = ql.UniformRandomSequenceGenerator(sequenceGenerator)
-        gaussianSequenceGenerator = ql.GaussianRandomSequenceGenerator(rng)
+        unifrom_sequence_generator = ql.UniformRandomSequenceGenerator(
+            dimensions * nSteps, ql.UniformRandomGenerator())
+        gaussian_sequence_generator = ql.GaussianRandomSequenceGenerator(
+            unifrom_sequence_generator)
         path_generator = ql.GaussianMultiPathGenerator(
-            process, gaussianSequenceGenerator, False)
+            process, list(times), gaussian_sequence_generator, False)
 
     return path_generator
 
@@ -45,10 +48,10 @@ class Simulation():
     def token_pair(self) -> Token_Pair:
         return self._token_pair
 
-    def geometric_brownian_motion(self, **kwargs) -> ql.GeometricBrownianMotionProcess:
+    def geometric_brownian_motion(self) -> ql.GeometricBrownianMotionProcess:
         return ql.GeometricBrownianMotionProcess(
             # fails for some reason due to the initial value type mismatch
-            self._params["initial_value"], self._params["mu"], self._params["sigma"])
+            self._params["initial_value"].value(), self._params["mu"], self._params["sigma"])
 
     def merton_jump_diffusion(self) -> ql.Merton76Process:
         dividendTS = ql.YieldTermStructureHandle(
@@ -59,7 +62,7 @@ class Simulation():
         volTS = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(
             self._params["start_date"], ql.NullCalendar(), self._params["sigma"], ql.Actual365Fixed()))
         process = ql.BlackProcess(
-            self._params["initial_value"], riskFreeTS, volTS)
+            self._params["initial_value"].value(), riskFreeTS, volTS)
 
         jumpIntensity = ql.QuoteHandle(ql.SimpleQuote(1.0))
         jumpVolatility = ql.QuoteHandle(ql.SimpleQuote(
