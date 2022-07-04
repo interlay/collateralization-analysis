@@ -9,6 +9,7 @@ requests = "*"
 matplotlib = "*"
 quantlib = "*"
 numpy = "*"
+pytest = "*"
 
 [dev-packages]
 

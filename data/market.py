@@ -84,29 +84,10 @@ class Automted_Market_Maker():
         Returns:
             float: _description_
         """
-        if output_token.name == self.base_token.name:
-            # does the swap with the base token as output
-            if amount < self._base_token_amount:
-                self._previous_exchange_rate = self.exchange_rate()
-                self._base_token_amount = self.base_token_amount - amount
-                self._quote_token_amount = self.invariant / self._base_token_amount
-
-                return float( self.exchange_rate() / self._previous_exchange_rate - 1)
-            else:
-                raise Exception(
-                    "Swap amount must be smaller than the amount of base tokens in the pool.")
-
-        else:
-            # does the swap with the quote token as output
-            if amount < self._quote_token_amount:
-                self._previous_exchange_rate = self.exchange_rate()
-                self._quote_token_amount = self._quote_token_amount + amount
-                self._base_token_amount = self.invariant / self._quote_token_amount
-
-                return float( self.exchange_rate() / self._previous_exchange_rate - 1)
-            else:
-                raise Exception(
-                    "Swap amount must be smaller than the amount of base tokens in the pool.")
+        self._base_token_amount, self._quote_token_amount, _ = self.calculate_params(
+            token = output_token, type = "exact_output"
+        )
+        
 
 
     def exact_input_swap(self, input_token: Token, amount: int) -> float:
@@ -119,53 +100,45 @@ class Automted_Market_Maker():
         Returns:
             float: _description_
         """
-        if input_token.name == self.base_token.name:
-            self._previous_exchange_rate = self.exchange_rate()
-            self._base_token_amount = self.base_token_amount + amount
-            self._quote_token_amount = self.invariant / self._base_token_amount
-
-            return float( self.exchange_rate()  / self._previous_exchange_rate- 1)
-        else:
-            self._previous_exchange_rate = self.exchange_rate()
-            self._quote_token_amount = self._quote_token_amount + amount
-            self._base_token_amount = self.invariant / self._quote_token_amount
-
-            return float( self.exchange_rate()  / self._previous_exchange_rate- 1)
+        self._base_token_amount, self._quote_token_amount, _ = self.calculate_params(
+            token = input_token, type = "exact_input"
+        )
 
 
     def calculate_params(self, token: Token, amount: int, type: str = "exact_output") -> tuple(float, float, float):
         if (token.name == self.base_token.name) & (type == "exact_output"):
             # does the swap with the base token as output
             if amount < self._base_token_amount:
-                _previous_exchange_rate = self.exchange_rate()
+                _current_exchange_rate = self.exchange_rate()
                 _base_token_amount = self.base_token_amount - amount
                 _quote_token_amount = self.invariant / self._base_token_amount
-                _slippage = float( self.exchange_rate() / self._previous_exchange_rate - 1)
             else:
                 raise Exception(
                     "Swap amount must be smaller than the amount of base tokens in the pool.")
             
         elif (token.name == self.quote_token.name) & (type == "exact_output"):
             if amount < self._quote_token_amount:
-                _previous_exchange_rate = self.exchange_rate()
+                _current_exchange_rate = self.exchange_rate()
                 _quote_token_amount = self._quote_token_amount - amount
-                _base_token_amount = self.invariant / self._quote_token_amount
+                _base_token_amount = self.invariant / _quote_token_amount
             else:
                 raise Exception(
                     "Swap amount must be smaller than the amount of base tokens in the pool.")
             
         elif (token.name == self.base_token.name) & (type == "exact_input"):
             # does the swap with the base token as output
-                _previous_exchange_rate = self.exchange_rate()
+                _current_exchange_rate = self.exchange_rate()
                 _base_token_amount = self.base_token_amount + amount
-                _quote_token_amount = self.invariant / self._base_token_amount
-                _slippage = float( self.exchange_rate() / self._previous_exchange_rate - 1)
+                _quote_token_amount = self.invariant / _base_token_amount
+                _slippage = float( self.exchange_rate() / _current_exchange_rate - 1)
 
             
         elif (token.name == self.quote_token.name) & (type == "exact_input"):
-                _previous_exchange_rate = self.exchange_rate()
+                _current_exchange_rate = self.exchange_rate()
                 _quote_token_amount = self._quote_token_amount + amount
-                _base_token_amount = self.invariant / self._quote_token_amount
+                _base_token_amount = self.invariant / _quote_token_amount
                 
-                
+        _new_exchange_rate = _quote_token_amount / _base_token_amount
+        _slippage = float( _new_exchange_rate / _current_exchange_rate - 1)
+        
         return (_base_token_amount, _quote_token_amount, _slippage)

@@ -1,5 +1,6 @@
 # Vault Collateralization Analysis
 
+
 This work analyzes historic data of KSM, DOT, KINT, USDC and BTC in order to decide on security parameters for the Kintsugi bridge. For assets traded in order-book exchanges, the code is general enough such that inspecting a new collateral asset can be done with minimal effort.
 
 Historic price data is gathered from Coingecko, while order book data is collected from the Binance API. Binance is preferred over the other centralized exchanges because it has by far the largest trading volume (https://coinmarketcap.com/rankings/exchanges/).
