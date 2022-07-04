@@ -1,4 +1,4 @@
-from data_request import Token
+from data.data_request import Token
 
 
 class Automted_Market_Maker():
@@ -105,7 +105,7 @@ class Automted_Market_Maker():
         )
 
 
-    def calculate_params(self, token: Token, amount: int, type: str = "exact_output") -> tuple(float, float, float):
+    def calculate_params(self, token: Token, amount: int, type: str = "exact_output") -> tuple[float, float, float]:
         if (token.name == self.base_token.name) & (type == "exact_output"):
             # does the swap with the base token as output
             if amount < self._base_token_amount:

@@ -68,7 +68,7 @@ print(f"The amm has {amm.base_token_amount} {amm.base_token.ticker}")
 print(f"The amm has {amm.quote_token_amount} {amm.quote_token.ticker}\n")
 
 trade_amount_base_token = 60
-slippage = amm.calculate_slippage(trade_amount_base_token)
+slippage = amm.calculate_params(trade_amount_base_token)
 
 print(
     f"A trade of {trade_amount_base_token} {amm.base_token.ticker} would take a slippage of {slippage*100}%"
