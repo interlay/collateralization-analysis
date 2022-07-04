@@ -36,8 +36,8 @@ from analysis import Analysis
 from simulation import Simulation
 from market import Automted_Market_Maker
 
-base_currency = Token("usd", "USD")
-quote_currency = Token("bitcoin", "BTC")
+quote_currency = Token("usd", "USD")
+base_currency = Token("bitcoin", "BTC")
 
 pair = Token_Pair(base_currency, quote_currency)
 pair.get_prices()
@@ -60,23 +60,27 @@ TVL = 10_000_000
 amm = Automted_Market_Maker(pair.base_token, pair.quote_token,
                             base_token_amount=TVL/2/start_price, quote_token_amount=TVL/2)
 
-print(f"The amm has {amm.base_token_amount} {amm._quote_token.ticker}")
-print(f"The amm has {amm.quote_token_amount} {amm._base_token.ticker}\n")
+print(f"The amm has {amm.base_token_amount} {amm.base_token.ticker}")
+print(f"The amm has {amm.quote_token_amount} {amm.quote_token.ticker}\n")
 
 trade_amount_base_token = 60
 slippage = amm.calculate_slippage(trade_amount_base_token)
 
-print(f"A trade of {trade_amount_base_token} {amm._quote_token.ticker} would take a slippage of {slippage*100}%")
+print(f"A trade of {trade_amount_base_token} {amm.base_token.ticker} would take a slippage of {slippage*100}%")
 
 # %%
-# add and remove liquidity
+# add liquidity
 
 amm.add_liquidity(5_000_000)
-print(f"The amm has {amm.base_token_amount} {amm._quote_token.ticker}")
-print(f"The amm has {amm.quote_token_amount} {amm._base_token.ticker}\n")
+print(f"The amm has {amm.quote_token_amount} {amm.quote_token.ticker}")
+print(f"The amm has {amm.base_token_amount} {amm.base_token.ticker}\n")
 
+
+#%%
+# remove liquidity
 amm.remove_liquidity(200_000)
-print(f"The amm has {amm.base_token_amount} {amm._quote_token.ticker}")
-print(f"The amm has {amm.quote_token_amount} {amm._base_token.ticker}\n")
+print(f"The amm has {amm.quote_token_amount} {amm.quote_token.ticker}")
+print(f"The amm has {amm.base_token_amount} {amm.base_token.ticker}\n")
+
 
 # %%
