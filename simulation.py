@@ -62,7 +62,7 @@ class Simulation():
 
     def merton_jump_diffusion(self) -> ql.Merton76Process:
         dividendTS = ql.YieldTermStructureHandle(
-            ql.FlatForward(self._params["start_date"], 0.01, ql.Actual365Fixed()))
+            ql.FlatForward(self._params["start_date"], 0.02, ql.Actual365Fixed()))
         riskFreeTS = ql.YieldTermStructureHandle(
             ql.FlatForward(self._params["start_date"], 0.01, ql.Actual365Fixed()))
         volTS = ql.BlackVolTermStructureHandle(ql.BlackConstantVol(
@@ -98,7 +98,7 @@ class Simulation():
         }
 
         # TODO: Refactor this to allow more flexibility
-        if self.strategy == "GMB":
+        if self.strategy == "GBM":
             process = self.geometric_brownian_motion()
 
             # TODO: should this be refactored? If so, how?
@@ -119,6 +119,7 @@ class Simulation():
                 # path generator can be taken out of this loop, same above, maybe this can be refactured further...
                 _path_generator = path_generator(
                     process, maturity, self._params["total_steps"])
+                print("Hallo")
                 path = _path_generator.next().value()
                 self._params["_paths"].append([path[0][i]
                                                for i in range(self._params["total_steps"] + 1)])

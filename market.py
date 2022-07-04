@@ -26,16 +26,30 @@ class Automted_Market_Maker():
     def quote_token_amount(self) -> int:
         return self._quote_token_amount
 
-    @invariant.setter
-    def invariant(self) -> None:
+    @property
+    def invariant(self) -> int:
+        return self._invariant
+
+    def set_invariant(self) -> None:
         if self._type == "CPF":
             self._invariant = self._base_token_amount * self._quote_token_amount
 
     def exchange_rate(self) -> float:
         return float(self._base_token_amount / self._quote_token_amount)
 
+    def add_liquidity(self, amount: int) -> None:
+        self._base_token_amount += amount / 2 / self.exchange_rate()
+        self._quote_token_amount += amount / 2
+        self.set_invariant()
+
+    def remove_liquidity(self, amount: int) -> None:
+        self._base_token_amount -= amount / 2 / self.exchange_rate()
+        self._quote_token_amount -= amount / 2
+        self.set_invariant()
+
     # TODO: refacture swap and calculate_slippage!
-    def swap(self, amount) -> float:
+
+    def swap(self, amount: int) -> float:
         if amount < self._base_token_amount:
             self._previous_exchange_rate = self.exchange_rate()
             self._base_token_amount = self.base_token_amount + amount
@@ -46,7 +60,8 @@ class Automted_Market_Maker():
             raise Exception(
                 "Swap amount must be smaller than the amount of base tokens in the pool.")
 
-    def calculate_slippage(self, amount: float) -> float:
+    # TODO: use int instead of float
+    def calculate_slippage(self, amount: int) -> float:
         if amount < self._base_token_amount:
             _previous_exchange_rate = self.exchange_rate()
             _base_token_amount = self.base_token_amount + amount
