@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 from data.data_request import Token_Pair
+from data.market import Automted_Market_Maker
 from simulation.simulation import Simulation
 
 
@@ -30,3 +31,16 @@ class Analysis:
 
             for _, path in self._simulation.paths.iteritems():
                 subPlots.plot(path)
+
+    def get_liquidation_threshold(self, amm_debt: Automted_Market_Maker, amm_collatera: Automted_Market_Maker,
+                                  debt_outstanding: int, profitability_threshold: float):
+        # It's assumed that the start of the strajectory is the unknown threshold x that has been reached at day 0.
+        # From now on, arbitrageurs will buy iBTC and burn it in exchange for collateral.
+        for _, path in self._simulation.paths.iteritems():
+            for row in path.iterrows():
+
+                amm.set_exchange_rate
+
+                """
+                
+                """
