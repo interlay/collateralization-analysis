@@ -125,8 +125,9 @@ class Simulation:
         steps: int = 365,
         maturity: int = 1,
         n_simulations: int = 50,
-        type="returns",
-        **kwargs
+        sigma: float = None,
+        mu: float = None,
+        initial_value: float = None,
     ) -> None:
         """
         Given the time unit is days, the default arguments represent a path with a length of 1 year, consisting of 365 days.
@@ -140,10 +141,10 @@ class Simulation:
 
         # TODO: Make some of them arguments in the simulate function
         self._params = {
-            "sigma": self.token_pair.returns.std()[0],
-            "mu": 0,
+            "sigma": sigma if sigma else self.token_pair.returns.std()[0] * steps**0.5,
+            "mu": mu if mu else self.token_pair.returns.mean()[0]*365,
             "initial_value": ql.QuoteHandle(
-                ql.SimpleQuote(self.token_pair.prices.iloc[0][0])
+                ql.SimpleQuote(initial_value if initial_value else self.token_pair.prices.iloc[0][0])
             ),
             "start_date": parse_date_to_quantlib(self.token_pair.prices.index[0]),
             "total_steps": int(maturity * steps),
@@ -153,12 +154,11 @@ class Simulation:
         # TODO: Refactor this to allow more flexibility
         if self.strategy == "GBM":
             process = self.geometric_brownian_motion()
-
-            # TODO: should this be refactored? If so, how?
-            for step in range(n_simulations):
-                _path_generator = path_generator(
+            _path_generator = path_generator(
                     process, maturity, self._params["total_steps"]
                 )
+            # TODO: should this be refactored? If so, how?
+            for _ in range(n_simulations):
                 path = _path_generator.next().value()
                 self._params["_paths"].append(
                     [path[0][i] for i in range(self._params["total_steps"] + 1)]

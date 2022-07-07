@@ -106,6 +106,22 @@ class Token_Pair():
             self.returns = self.prices.pct_change(periods=shift_period, fill_method="bfill").dropna()
 
 
+    def calculate_mean_return(self, type: str = "geometric",
+                              standardization_period: str = "annualy") -> float:
+        standardization_periods = {
+            "daily": 1,
+            "weekly" : 7,
+            "monthly": 31,
+            "annualy": 365
+        }
+        if type == "geometric":
+            return (self.prices.iloc[-1,0] / self.prices.iloc[0,0]) ** (
+                standardization_periods[standardization_period] / len(self.prices)) -1 
+            
+        if type == "arithmetic":
+            self.calculate_returns()
+            return (self.returns.mean()[0] * standardization_periods[standardization_period])
+
 class Data_Request():
     def __init__(self, token_pair: Token_Pair, data_source: str ="coingecko", start_date: str = None, end_date: str = None):
         """

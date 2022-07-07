@@ -89,7 +89,7 @@ class Automted_Market_Maker():
             float: _description_
         """
         self._base_token_amount, self._quote_token_amount, _ = self.calculate_params(
-            token=output_token, type="exact_output"
+            token=output_token, amount= amount, type="exact_output"
         )
 
     def exact_input_swap(self, input_token: Token, amount: int) -> float:
@@ -103,7 +103,7 @@ class Automted_Market_Maker():
             float: _description_
         """
         self._base_token_amount, self._quote_token_amount, _ = self.calculate_params(
-            token=input_token, type="exact_input"
+            token=input_token, amount=amount, type="exact_input"
         )
 
     def exact_input_swap_slippage(self, input_token: Token, amount: int) -> float:
@@ -117,7 +117,7 @@ class Automted_Market_Maker():
             float: _description_
         """
         _, _, slippage = self.calculate_params(
-            token=input_token, type="exact_input"
+            token=input_token, amount=amount, type="exact_input"
         )
         return slippage
 
@@ -135,7 +135,7 @@ class Automted_Market_Maker():
             float: _description_
         """
         _, _, slippage = self.calculate_params(
-            token=output_token, type="exact_output"
+            token=output_token, amount=amount, type="exact_output"
         )
         return slippage
 
