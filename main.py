@@ -93,8 +93,9 @@ simple_analysis.plot_returns("Percentage", "Performance", type="line")
 # The collateral/debt ratio will fall below 1 only with a 10% chance in a year or...
 # We should see this happening once every ~10 years.
 # This assumes no premium redeem, additional collateralization or liquidation.
-simple_analysis.get_threshold_multiplier(alpha=0.90) # <- this can be changed ofc 
+secure_threshold = simple_analysis.get_threshold_multiplier(alpha=0.90) # <- this can be changed ofc 
 
+print(f"The estimated liquidation threshold is ~{int(secure_threshold * 100)}% of the debt value")
 
 # %%
 # This time we do the same process on a intraday basis
@@ -125,7 +126,9 @@ simple_analysis.plot_returns("Percentage", "Performance", type="line")
 # This gives us the secure threshold multiplier, stating that:
 # The collateral/debt ratio will fall below 1 only with a 0.1% chance in 10 days or...
 # This assumes no premium redeem, additional collateralization or liquidation.
-simple_analysis.get_threshold_multiplier(alpha=0.999) # <- this can be changed ofc 
+liquidation_threshold = simple_analysis.get_threshold_multiplier(alpha=0.999) # <- this can be changed ofc 
+
+print(f"The estimated liquidation threshold is ~{int(liquidation_threshold * 100)}% of the debt value")
 
 
 
