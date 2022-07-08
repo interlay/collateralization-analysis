@@ -57,9 +57,15 @@ TODO: Add example usage.
 
 
 # Threshold analysis
-An example of an analysis for the token pair BTC/aUSD can be found in `main.ipynb`.
+An example of an analysis for the token pair BTC/aUSD can be found in `btc_ausd_analysis.ipynb`.
 
 The analysed parameters are `liquidation_threshold` and `secure_threshold`. The bridge also uses a `premium_redeem_threshold` to increase system security, but premium redeems are assumed not to occur in order to better capture tail risk.
+
+<b>The analysis makes the following assumptions: </b>
+1. Liquidators might need up to 7 trading days to close out all under-collateralized iBTC positions
+2. Vault operators check their collateralization ratio at least once every 14 days and might need up to 7 days to top up their collateral (=21 days in total)
+3. There is enough liquidity to buy bitcoin and (self-)mint to burn it to redeem the collateral
+4. Liquidators settle their trade in a stable coin position. That mean that if the collateral is a not a stable coin, they will want to swap it for a stable coin.
 
 Vaults are modelled as a single entity that mints the maximum wrapped amount on the first simulated day, at the secure threshold.
 
