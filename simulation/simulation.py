@@ -44,7 +44,8 @@ class Simulation:
 
     def black_process(self):
         riskFreeTS = ql.YieldTermStructureHandle(
-            ql.FlatForward(self._params["start_date"], 0.05, ql.Actual365Fixed())
+            ql.FlatForward(self._params["start_date"],
+                           0.05, ql.Actual365Fixed())
         )
         volTS = ql.BlackVolTermStructureHandle(
             ql.BlackConstantVol(
@@ -66,10 +67,12 @@ class Simulation:
 
     def heston_process(self) -> ql.Merton76Process:
         riskFreeTS = ql.YieldTermStructureHandle(
-            ql.FlatForward(self._params["start_date"], 0.05, ql.Actual365Fixed())
+            ql.FlatForward(self._params["start_date"],
+                           0.05, ql.Actual365Fixed())
         )
         dividendTS = ql.YieldTermStructureHandle(
-            ql.FlatForward(self._params["start_date"], 0.01, ql.Actual365Fixed())
+            ql.FlatForward(self._params["start_date"],
+                           0.01, ql.Actual365Fixed())
         )
 
         v0, kappa, theta, rho, sigma = 0.005, 0.8, 0.008, 0.2, self._params["sigma"]
@@ -86,10 +89,12 @@ class Simulation:
 
     def merton_jump_diffusion(self) -> ql.Merton76Process:
         dividendTS = ql.YieldTermStructureHandle(
-            ql.FlatForward(self._params["start_date"], 0.02, ql.Actual365Fixed())
+            ql.FlatForward(self._params["start_date"],
+                           0.02, ql.Actual365Fixed())
         )
         riskFreeTS = ql.YieldTermStructureHandle(
-            ql.FlatForward(self._params["start_date"], 0.01, ql.Actual365Fixed())
+            ql.FlatForward(self._params["start_date"],
+                           0.01, ql.Actual365Fixed())
         )
         volTS = ql.BlackVolTermStructureHandle(
             ql.BlackConstantVol(
@@ -124,7 +129,7 @@ class Simulation:
         self,
         steps: int = 365,
         maturity: int = 1,
-        n_simulations: int = 50,
+        n_simulations: int = 1000,
         sigma: float = None,
         mu: float = None,
         initial_value: float = None,
@@ -136,15 +141,21 @@ class Simulation:
         Args:
             steps (int, optional): Steps within a period of the maturity. Defaults to 365, which could be a year if the time unit is days.
             maturity (int, optional): Maturity periods determining the length of the simulation. Defaults to 1.
-            n_simulations (int, optional): _description_. Defaults to 1000.
+            n_simulations (int, optional): Number of paths to be simulated. Defaults to 1000.
+            sigma (float, optional): The standard deviation of the random processes. If None, it defaults to the standard deviation of the sample.
+            mu (float, optional): The mean drift of the random process. If None it defaults to the mean of the sample. 
+            initial_value (float, optional): The initial value of the random process. If None, it defaults to the initial value of the sample.
+
+        Returns:
+            None
         """
 
-        # TODO: Make some of them arguments in the simulate function
         self._params = {
             "sigma": sigma if sigma else self.token_pair.returns.std()[0] * steps**0.5,
             "mu": mu if mu else self.token_pair.returns.mean()[0]*365,
             "initial_value": ql.QuoteHandle(
-                ql.SimpleQuote(initial_value if initial_value else self.token_pair.prices.iloc[0][0])
+                ql.SimpleQuote(
+                    initial_value if initial_value else self.token_pair.prices.iloc[0][0])
             ),
             "start_date": parse_date_to_quantlib(self.token_pair.prices.index[0]),
             "total_steps": int(maturity * steps),
@@ -154,64 +165,22 @@ class Simulation:
         # TODO: Refactor this to allow more flexibility
         if self.strategy == "GBM":
             process = self.geometric_brownian_motion()
-            _path_generator = path_generator(
-                    process, maturity, self._params["total_steps"]
-                )
-            # TODO: should this be refactored? If so, how?
-            for _ in range(n_simulations):
-                path = _path_generator.next().value()
-                self._params["_paths"].append(
-                    [path[0][i] for i in range(self._params["total_steps"] + 1)]
-                )
-
-            # TODO: Should this rather be stored in token_pair to make it easier to use with the analysis package?
-            self.paths = pd.DataFrame(self._params["_paths"]).transpose()
-
         elif self.strategy == "merton_jump_diffusion":
             process = self.merton_jump_diffusion()
-
-            for step in range(n_simulations):
-                # path generator can be taken out of this loop, same above, maybe this can be refactured further...
-                _path_generator = path_generator(
-                    process, maturity, self._params["total_steps"]
-                )
-                print("Hallo")
-                path = _path_generator.next().value()
-                self._params["_paths"].append(
-                    [path[0][i] for i in range(self._params["total_steps"] + 1)]
-                )
-
-            # TODO: Should this rather be stored in token_pair to make it easier to use with the analysis package?
-            self.paths = pd.DataFrame(self._params["_paths"]).transpose()
-
         elif self.strategy == "heston_process":
             process = self.heston_process()
-
-            for step in range(n_simulations):
-                # path generator can be taken out of this loop, same above, maybe this can be refactured further...
-                _path_generator = path_generator(
-                    process, maturity, self._params["total_steps"]
-                )
-                path = _path_generator.next().value()
-                self._params["_paths"].append(
-                    [path[0][i] for i in range(self._params["total_steps"] + 1)]
-                )
-
-            # TODO: Should this rather be stored in token_pair to make it easier to use with the analysis package?
-            self.paths = pd.DataFrame(self._params["_paths"]).transpose()
-
         elif self.strategy == "black_process":
             process = self.black_process()
 
-            for step in range(n_simulations):
-                # path generator can be taken out of this loop, same above, maybe this can be refactured further...
-                _path_generator = path_generator(
-                    process, maturity, self._params["total_steps"]
-                )
-                path = _path_generator.next().value()
-                self._params["_paths"].append(
-                    [path[0][i] for i in range(self._params["total_steps"] + 1)]
-                )
+        _path_generator = path_generator(
+            process, maturity, self._params["total_steps"]
+        )
+        # TODO: should this be refactored? If so, how?
+        for _ in range(n_simulations):
+            path = _path_generator.next().value()
+            self._params["_paths"].append(
+                [path[0][i] for i in range(self._params["total_steps"] + 1)]
+            )
 
-            # TODO: Should this rather be stored in token_pair to make it easier to use with the analysis package?
-            self.paths = pd.DataFrame(self._params["_paths"]).transpose()
+        # TODO: Should this rather be stored in token_pair to make it easier to use with the analysis package?
+        self.paths = pd.DataFrame(self._params["_paths"]).transpose()
