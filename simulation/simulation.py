@@ -7,12 +7,34 @@ import pandas as pd
 
 
 def parse_date_to_quantlib(date: pd.Timestamp) -> ql.Date:
+    """Parses a pandas.Timestamp object into a quantLib.Date object.
+
+    Args:
+        date (pd.Timestamp): Timestamp object to parse.
+
+    Returns:
+        ql.Date: quantLib.Date object for the simulation.
+    """
     date = datetime.strftime(date, "%d-%m-%Y")
     return ql.Date(*[int(i) for i in date.split("-")])
 
 
 # TODO: Can this be generalized so that all processes can use this function for creating a path generator?
-def path_generator(process, maturity, nSteps):
+def path_generator(process, maturity: float, nSteps: int):
+    """Returns a path generator for any process by first, generating a uniform_sequence_generator for the given dimensions.
+    Secondly, it creates a gaussian_sequence_generator, using the uniform_sequence_generator. Lastly it returns a GaussianMultiPathGenerator iterator-object,
+    which can be used to generate random paths using the given process.
+
+    Args:
+        process (_type_): _description_
+        maturity (_type_): The maruity at which the process ends. This can be though of as how many times the number of steps will be run by the simulation.
+            E.g. if you have steps that represent one day, you can create a time series with the maturity of two years by using 365 steps and a maturity of 2.
+        nSteps (_type_): The number of steps within one period of the maturity. The unit is determined by the time units of the sample. 
+            E.g. if you have estimate the mean and standard deviation from a sample of daily data, each step will be generated based on those values.
+
+    Returns:
+        _type_: _description_
+    """
     dimensions = process.factors()
     times = ql.TimeGrid(maturity, nSteps)
 
@@ -22,14 +44,15 @@ def path_generator(process, maturity, nSteps):
     gaussian_sequence_generator = ql.GaussianRandomSequenceGenerator(
         unifrom_sequence_generator
     )
-    path_generator = ql.GaussianMultiPathGenerator(
+    return ql.GaussianMultiPathGenerator(
         process, list(times), gaussian_sequence_generator, False
     )
 
-    return path_generator
-
 
 class Simulation:
+    """This class represents a simulation with different processes.
+    """
+
     def __init__(self, token_pair: Token_Pair, strategy: str) -> None:
         self._token_pair = token_pair
         self._strategy = strategy
@@ -57,6 +80,7 @@ class Simulation:
         )
         return ql.BlackProcess(self._params["initial_value"], riskFreeTS, volTS)
 
+    # TODO: I think these methods could be refactored into its own class?
     def geometric_brownian_motion(self) -> ql.GeometricBrownianMotionProcess:
         return ql.GeometricBrownianMotionProcess(
             # I dont understand why this fails without .value()

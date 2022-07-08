@@ -4,18 +4,31 @@ from data.market import Automted_Market_Maker
 from simulation.simulation import Simulation
 import pandas as pd
 
-def get_initial_drawdown(path: pd.Series) -> float:
-    return (min(path) / path[0] -1)
-    
+
+def get_initial_drawdown(series: pd.Series) -> float:
+    """Computes the maximum drawdown from the first data point in the series.
+
+    Args:
+        series (pd.Series): A time series object containing price return data.
+
+    Returns:
+        float: The highest drawdown from the first data point in the series
+    """
+    return (min(series) / series[0] - 1)
+
 
 class Analysis:
+    """This class implements methods to analyse the results of a given simulation
+    """
+
     def __init__(self, simulation: Simulation):
         self._simulation = simulation
-        
+
     @property
     def simulation(self) -> Simulation:
         return self._simulation
 
+    # TODO: Refactor this, maybe even into a separate class for plots.
     def plot_returns(self, data_label, title, type="hist"):
         if type == "hist":
             plt.hist(
@@ -39,28 +52,26 @@ class Analysis:
 
             for _, path in self._simulation.paths.iteritems():
                 subPlots.plot(path)
-                
-    
-    def get_threshold_multiplier(self, alpha: float = 0.95) -> float:
-        """Estimates the premium multiplier on top of the liquidation threshold by getting the initial drawdown of the ith interval
+
+    def get_threshold_multiplier(self, alpha: float) -> float:
+        """Estimates the premium multiplier for the threshold by getting the initial maxmimum drawdown of the ith interval.
 
         Args:
-            alpha (float, optional): Confidence interval. Defaults to 0.9999.
+            alpha (float): Confidence interval.
 
         Returns:
-            float: Returns the premium multiplier on top of other thresholds
+            float: Returns the threshold multiplier
         """
         initial_drawdowns = []
         for _, path in self._simulation.paths.iteritems():
             initial_drawdowns.append(get_initial_drawdown(path))
-        
+
         initial_drawdowns.sort(reverse=True)
-        return (1 / ( 1 + initial_drawdowns[int(len(initial_drawdowns) * alpha)]))
-            
-        
+        return (1 / (1 + initial_drawdowns[int(len(initial_drawdowns) * alpha)]))
 
     def get_liquidation_threshold(self, TVL: int,
                                   debt_outstanding: int):
+        """Experimental WIP"""
         # It's assumed that the start of the strajectory is the unknown threshold x that has been reached at day 0.
         # From now on, arbitrageurs will buy iBTC and burn it in exchange for collateral.
         for _, path in self._simulation.paths.iteritems():
@@ -74,9 +85,6 @@ class Analysis:
                     base_token_amount=TVL / 2 / value,
                     quote_token_amount=TVL / 2,
                 )
-                
-                
-
 
                 """
                 
