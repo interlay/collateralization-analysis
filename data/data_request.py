@@ -150,7 +150,7 @@ class Data_Request():
 
         if self._data_source == "coingecko":
             base_token = self._token_pair.base_token.name
-            quote_token = self._token_pair.quote_token.name
+            quote_token = self._token_pair.quote_token.ticker
             self._url_endpoint = urls[self._data_source] + base_token + "/market_chart?vs_currency=" + quote_token + "&days=" + length_in_days
 
     def request_historic_prices(self):
