@@ -1,6 +1,16 @@
 # Vault Collateralization Analysis
+This repo containts a package for analyzing collateral as well as the jupyter notebooks containing the implementation for specific collaterals.
 
-This package contains a framework for conducting risk analysis of collateral for vaults and is split into three different parts.
+# Notebooks
+The current implementations of the analysis include:
+1. BTC/aUSD: btc_ausd_analysis.ipynb
+
+Each notebook contains a detailed description of the anlysis process and can be run as is.
+Note, that the results can vary slightly depending on the date the code is run, since there is no fixed end date set in the code, as well as due to the fact that the estimates are the result of a simulation with an underlying random process.
+
+
+# Package
+The package contains a framework for conducting risk analysis of collateral for vaults and is split into three different parts.
 
 1. Data
 2. Simulation
@@ -81,3 +91,15 @@ Future improvements:
 - Aggregate trading data from multiple centralized exchanges.
 - Use a loss function that priotizes outliers when training the slippage model.
 - In a similar work, Gauntlet (https://medium.com/gauntlet-networks/karura-parameter-recommendation-methodology-6ce7fe06cb77) also train a price impact model to measure how quickly the market recovers after large trades. Such a model should be added to this framework too.
+
+
+## Details
+### Liquidation Process
+
+Liquidation process:
+    1. Off-chain worker trigger liquidation and vault seizes collateral
+    2. A third party can now burn iBTC to receive the collateral
+        2.1 Buy iBTC
+        2.2 Burn iBTC
+        2.3 Receive collateral
+    3. (Optional) Swap collateral into other currency
