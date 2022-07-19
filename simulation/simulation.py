@@ -1,4 +1,3 @@
-from importlib.resources import path
 from data.data_request import Token_Pair
 import QuantLib as ql
 import numpy as np
@@ -18,8 +17,6 @@ def parse_date_to_quantlib(date: pd.Timestamp) -> ql.Date:
     date = datetime.strftime(date, "%d-%m-%Y")
     return ql.Date(*[int(i) for i in date.split("-")])
 
-
-# TODO: Can this be generalized so that all processes can use this function for creating a path generator?
 def path_generator(process, maturity: float, nSteps: int):
     """Returns a path generator for any process by first, generating a uniform_sequence_generator for the given dimensions.
     Secondly, it creates a gaussian_sequence_generator, using the uniform_sequence_generator. Lastly it returns a GaussianMultiPathGenerator iterator-object,
@@ -47,8 +44,6 @@ def path_generator(process, maturity: float, nSteps: int):
     return ql.GaussianMultiPathGenerator(
         process, list(times), gaussian_sequence_generator, False
     )
-
-
 class Simulation:
     """This class represents a simulation with different processes.
     """
@@ -64,6 +59,7 @@ class Simulation:
     @property
     def token_pair(self) -> Token_Pair:
         return self._token_pair
+    
 
     def black_process(self):
         riskFreeTS = ql.YieldTermStructureHandle(
@@ -175,7 +171,7 @@ class Simulation:
         """
 
         self._params = {
-            "sigma": sigma if sigma else self.token_pair.returns.std()[0] * steps**0.5,
+            "sigma": sigma if sigma else self.token_pair.returns.std()[0],
             "mu": mu if mu else self.token_pair.returns.mean()[0]*365,
             "initial_value": ql.QuoteHandle(
                 ql.SimpleQuote(
