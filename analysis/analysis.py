@@ -54,7 +54,8 @@ class Analysis:
                 subPlots.plot(path)
 
     def get_threshold_multiplier(self, alpha: float) -> float:
-        """Estimates the premium multiplier for the threshold by getting the initial maxmimum drawdown of the ith interval.
+        """Estimates the premium multiplier for the threshold by getting the initial maxmimum drawdown of the i-th interval corrosponding to the given alpha.
+        Example: alpha=0.99 means that the functions selects the maximum drawdown that corrosponds to the 99th-percentile/interval.
 
         Args:
             alpha (float): Confidence interval.
@@ -67,6 +68,7 @@ class Analysis:
             initial_drawdowns.append(get_initial_drawdown(path))
 
         initial_drawdowns.sort(reverse=True)
+
         return (1 / (1 + initial_drawdowns[int(len(initial_drawdowns) * alpha)]))
 
     def get_liquidation_threshold(self, TVL: int,

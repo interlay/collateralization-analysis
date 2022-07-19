@@ -6,17 +6,15 @@ urls = {
     "coingecko": "https://api.coingecko.com/api/v3/coins/",
 }
 
-#TODO: Give each token a quote currency already and request prices and returns in this class.
-# In the Token_Pair class, check if both token habe the same quote currency, else fail.
-# If they do have the same quote currency, pair returns can be computed as ((1+r(A)) * (1+r(B)))
+
 class Token():
     """Class that represents a token"""
-    def __init__(self, name:str, ticker: str):
+
+    def __init__(self, name: str, ticker: str):
         """Initializing the token object.
 
         Args:
             name (str): Name of the token which is used to identify the token in the data query so this must match the name of the token for the specific source.
-                NOTE: The name can be different when it should be the quote currency (e.g. 'bitcoin' becomes 'btc' if it should be the quote currency instead of the base currency)
             ticker (str): An abbriviation of the name between 3-5 letters&digits that will represent the pair in a quote (e.g. BTC/DOT)
         """
         self._ticker = ticker
@@ -34,6 +32,7 @@ class Token():
 # TODO: Add a default token argument that sets the quote currency to USD if nothing else is specified.
 class Token_Pair():
     """Class representating a trading pair of two tokens."""
+
     def __init__(self, base_token: Token, quote_token: Token) -> None:
         """Initializing the token pair.
 
@@ -45,6 +44,7 @@ class Token_Pair():
         """
         self._base_token = base_token
         self._quote_token = quote_token
+        self._prices = None
 
     # Getter & Setter
 
@@ -59,8 +59,7 @@ class Token_Pair():
     @property
     def prices(self) -> pd.DataFrame:
         return self._prices
-    
-    # TODO: Do I even need setter if I only set the values inside the class? I don't think so!
+
     @prices.setter
     def prices(self, prices: pd.DataFrame) -> None:
         self._prices = prices
@@ -70,13 +69,12 @@ class Token_Pair():
         return self._returns
 
     @returns.setter
-    def returns(self, returns):
+    def returns(self, returns: pd.DataFrame) -> None:
         self._returns = returns
-
 
     # Functions
 
-    def get_prices(self, data_source: str = "coingecko", start_date: str = None, end_date: str = None, inverse: bool=False) -> None:
+    def get_prices(self, data_source: str = "coingecko", start_date: str = None, end_date: str = None, inverse: bool = False) -> None:
         """Requests the prices from 'source' 
 
         Args:
@@ -85,7 +83,7 @@ class Token_Pair():
             end_date (str, optional): End date as string in the format '%Y-%m-%d'. If none is given, it will default to today. Defaults to None.
             inverse (bool, optional): Coingecko does not support every token as quote currency. For exotic tokens as quote currency, this must be set to true so that the prices will be inverted. Defaults to False.
         """
-        
+
         request = Data_Request(self, data_source, start_date, end_date)
         prices = request.request_historic_prices()
         if not inverse:
@@ -96,34 +94,35 @@ class Token_Pair():
     def calculate_returns(self, type: str = "geometric", period: str = "daily") -> None:
         shift_periods = {
             "daily": 1,
-            "weekly" : 7,
+            "weekly": 7,
             "monthly": 31,
             "annualy": 365
         }
         shift_period = shift_periods[period]
 
         if type == "geometric":
-            self.returns = self.prices.pct_change(periods=shift_period, fill_method="bfill").dropna()
-
+            self.returns = self.prices.pct_change(
+                periods=shift_period, fill_method="bfill").dropna()
 
     def calculate_mean_return(self, type: str = "geometric",
                               standardization_period: str = "annualy") -> float:
         standardization_periods = {
             "daily": 1,
-            "weekly" : 7,
+            "weekly": 7,
             "monthly": 31,
             "annualy": 365
         }
         if type == "geometric":
-            return (self.prices.iloc[-1,0] / self.prices.iloc[0,0]) ** (
-                standardization_periods[standardization_period] / len(self.prices)) -1 
-            
+            return (self.prices.iloc[-1, 0] / self.prices.iloc[0, 0]) ** (
+                standardization_periods[standardization_period] / len(self.prices)) - 1
+
         if type == "arithmetic":
             self.calculate_returns()
             return (self.returns.mean()[0] * standardization_periods[standardization_period])
 
+
 class Data_Request():
-    def __init__(self, token_pair: Token_Pair, data_source: str ="coingecko", start_date: str = None, end_date: str = None):
+    def __init__(self, token_pair: Token_Pair, data_source: str = "coingecko", start_date: str = None, end_date: str = None):
         """
         :Token_Pair: An instance of class Token_Pair with the two tokens for which the data should be requested
         :data_source: Source from where the data should be requested
@@ -139,8 +138,9 @@ class Data_Request():
     def get_length_in_days(self) -> str:
         if self._start_date is None:
             return str(365)
-        
-        time_delta = datetime.strptime(self._end_date, "%Y-%m-%d") - datetime.strptime(self._start_date, "%Y-%m-%d")
+
+        time_delta = datetime.strptime(
+            self._end_date, "%Y-%m-%d") - datetime.strptime(self._start_date, "%Y-%m-%d")
         return str(time_delta.days)
 
     def parse_url(self):
@@ -151,7 +151,8 @@ class Data_Request():
         if self._data_source == "coingecko":
             base_token = self._token_pair.base_token.name
             quote_token = self._token_pair.quote_token.ticker
-            self._url_endpoint = urls[self._data_source] + base_token + "/market_chart?vs_currency=" + quote_token + "&days=" + length_in_days
+            self._url_endpoint = urls[self._data_source] + base_token + \
+                "/market_chart?vs_currency=" + quote_token + "&days=" + length_in_days
 
     def request_historic_prices(self):
         self.parse_url()
