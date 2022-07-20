@@ -76,7 +76,6 @@ class Simulation:
         )
         return ql.BlackProcess(self._params["initial_value"], riskFreeTS, volTS)
 
-    # TODO: I think these methods could be refactored into its own class?
     def geometric_brownian_motion(self) -> ql.GeometricBrownianMotionProcess:
         return ql.GeometricBrownianMotionProcess(
             # I dont understand why this fails without .value()
@@ -85,6 +84,7 @@ class Simulation:
             self._params["sigma"],
         )
 
+    # TODO: Pass the hard coded values as args or kwargs
     def heston_process(self) -> ql.Merton76Process:
         riskFreeTS = ql.YieldTermStructureHandle(
             ql.FlatForward(self._params["start_date"],
@@ -147,9 +147,9 @@ class Simulation:
 
     def simulate(
         self,
-        steps: int = 365,
-        maturity: int = 1,
-        n_simulations: int = 1000,
+        steps: int,
+        maturity: int,
+        n_simulations: int = 10_000,
         sigma: float = None,
         mu: float = None,
         initial_value: float = None,
@@ -159,9 +159,9 @@ class Simulation:
         1000 of those paths will be simulated.
 
         Args:
-            steps (int, optional): Steps within a period of the maturity. Defaults to 365, which could be a year if the time unit is days.
-            maturity (int, optional): Maturity periods determining the length of the simulation. Defaults to 1.
-            n_simulations (int, optional): Number of paths to be simulated. Defaults to 1000.
+            steps (int): Steps within a period of the maturity.
+            maturity (int): Maturity periods determining the length of the simulation.
+            n_simulations (int, optional): Number of paths to be simulated. Defaults to 10,000.
             sigma (float, optional): The standard deviation of the random processes. If None, it defaults to the standard deviation of the sample.
             mu (float, optional): The mean drift of the random process. If None it defaults to the mean of the sample. 
             initial_value (float, optional): The initial value of the random process. If None, it defaults to the initial value of the sample.
@@ -172,7 +172,7 @@ class Simulation:
 
         self._params = {
             "sigma": sigma if sigma else self.token_pair.returns.std()[0],
-            "mu": mu if mu else self.token_pair.returns.mean()[0]*365,
+            "mu": mu if mu else self.token_pair.returns.mean()[0],
             "initial_value": ql.QuoteHandle(
                 ql.SimpleQuote(
                     initial_value if initial_value else self.token_pair.prices.iloc[0][0])
