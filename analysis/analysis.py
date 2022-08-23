@@ -53,23 +53,39 @@ class Analysis:
             for _, path in self._simulation.paths.iteritems():
                 subPlots.plot(path)
 
-    def get_threshold_multiplier(self, alpha: float) -> float:
+    def get_threshold_multiplier(self, alpha: float, at_step: int = None) -> float:
         """Estimates the premium multiplier for the threshold by getting the initial maxmimum drawdown of the i-th interval corrosponding to the given alpha.
         Example: alpha=0.99 means that the functions selects the maximum drawdown that corrosponds to the 99th-percentile/interval.
 
         Args:
             alpha (float): Confidence interval.
+            at_step (int): default None. If None, the whole time series is used for the estimation. If a step is given, the path is truncated up to that step.
 
         Returns:
             float: Returns the threshold multiplier
         """
+        
+        at_step = -1 if at_step is None else at_step
+        
+        if at_step > len(self._simulation.paths[0]):
+            raise Exception("Step must be smaller or equal to the length of the path.")
+        
         initial_drawdowns = []
         for _, path in self._simulation.paths.iteritems():
-            initial_drawdowns.append(get_initial_drawdown(path))
+            initial_drawdowns.append(get_initial_drawdown(path[:at_step]))
 
+        # These drawdowns are being represented as negative percentage returns
+        # Sorting this in reverse order (descending) mean that the 99th percentile
+        # is the 99th percent lowest return
         initial_drawdowns.sort(reverse=True)
-
-        return (1 / (1 + initial_drawdowns[int(len(initial_drawdowns) * alpha)]))
+        
+        # This is the value at risk (VaR) at a given confidence interval (=alpha)
+        # In this case, the VaR is represented as a negative number as it is the 
+        # n_th worst 'initial' drawdown of the simulation
+        value_at_risk = initial_drawdowns[int(len(initial_drawdowns) * alpha)]
+        
+        # Inverting this then gives us the threshold that 
+        return (1 / (1 + value_at_risk))
 
     def get_liquidation_threshold(self, TVL: int,
                                   debt_outstanding: int):
