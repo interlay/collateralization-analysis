@@ -73,7 +73,7 @@ class Token_Pair():
         self._returns = returns
 
     # Functions
-
+    # TODO: If inverse = True, it should also switch base and quote token if it gets executed for the first time to correctly represent the price in terms of base and quote currency.
     def get_prices(self, data_source: str = "coingecko", start_date: str = None, end_date: str = None, inverse: bool = False) -> None:
         """Requests the prices from 'source' 
 
@@ -121,6 +121,7 @@ class Token_Pair():
             return (self.returns.mean()[0] * standardization_periods[standardization_period])
 
 
+#TODO: Implement coingecko API
 class Data_Request():
     def __init__(self, token_pair: Token_Pair, data_source: str = "coingecko", start_date: str = None, end_date: str = None):
         """
