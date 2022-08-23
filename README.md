@@ -1,9 +1,36 @@
 # Vault Collateralization Analysis
 This repo containts a package for analyzing collateral as well as the jupyter notebooks containing the implementation for specific collaterals.
 
+# Setup
+Optional: Install pipenv to create a virtual environment for this project
+ ```
+ pip install --user pipenv
+ ```
+
+
+To install the depencies for this project and enter the virtual environment:
+```
+pipenv install
+pipenv shell
+```
+
+To run any of the analysis using python
+```
+python <analysis_file.py>
+```
+
+To run any unit tests
+```
+pytest test_data_request.py
+```
+
+Or just run any of the notebooks inside your IDE or a web based jupyter environment.
+
+
 # Notebooks
 The current implementations of the analysis include:
 1. BTC/aUSD: btc_ausd_analysis.ipynb
+1. BTC/LKSM: btc_lksm_analysis.ipynb
 
 Each notebook contains a detailed description of the anlysis process and can be run as is.
 Note, that the results can vary slightly depending on the date the code is run, since there is no fixed end date set in the code, as well as due to the fact that the estimates are the result of a simulation with an underlying random process.
@@ -73,9 +100,18 @@ The analysed parameters are `liquidation_threshold` and `secure_threshold`. The 
 
 <b>The analysis makes the following assumptions: </b>
 1. Liquidators might need up to 7 trading days to close out all under-collateralized iBTC positions
-2. Vault operators check their collateralization ratio at least once every 14 days and might need up to 7 days to top up their collateral (=21 days in total)
-3. There is enough liquidity to buy bitcoin and (self-)mint to burn it to redeem the collateral
-4. Liquidators settle their trade in a stable coin position. That mean that if the collateral is a not a stable coin, they will want to swap it for a stable coin.
+2. Liquidators will start doing premium redeems within a 3 days period to increase the collateral ratio above the premium redeem threshold again before actual liquidations happen.
+3. Vault operators check their collateralization ratio at least once every 14 days
+4. There is enough liquidity to buy bitcoin and (self-)mint to burn it to redeem and unlock the collateral
+5. Liquidators settle their trade in a stable coin position. That mean that if the collateral is a not a stable coin, they will want to swap it for a stable coin.
+
+
+
+<b>The simulation makes the following assumptions: </b>
+1. The standard deviation is constant and equal to the historic standard deviation.
+2. The short term mean is assumed to be zero. This is because the estimation of the mean is very unstable and does usually only hold in the long run, if at all.
+3. The distrubution of returns follows a normal distribution (due to general brownian motion model, but can be relaxed).
+
 
 Vaults are modelled as a single entity that mints the maximum wrapped amount on the first simulated day, at the secure threshold.
 
