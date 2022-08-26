@@ -6,7 +6,6 @@ from data.data_request import Token, Token_Pair
 from analysis.analysis import Analysis
 from simulation.simulation import Simulation
 import pandas as pd
-from data.market import Automted_Market_Maker as AMM
 
 ksm, lksm, btc, usd = Token("kusama", "KSM"), Token("liquid-ksm", "LKSM"), Token("bitcoin", "BTC"), Token("dollar", "USD")
 

@@ -7,12 +7,12 @@ class Automted_Market_Maker():
     This class simulates an AMM
     """
 
-    def __init__(self, base_token: Token, quote_token: Token,  base_token_amount: int, quote_token_amount: int, type: str = "CPF"):
+    def __init__(self, base_token: Token, quote_token: Token,  base_token_amount: int, quote_token_amount: int, swap_type: str = "CPF"):
         self._base_token = base_token
         self._quote_token = quote_token
         self._base_token_amount = base_token_amount
         self._quote_token_amount = quote_token_amount
-        self._type = type
+        self._swap_type = swap_type
         self._invariant = self._base_token_amount * self._quote_token_amount
 
     @property
@@ -40,7 +40,7 @@ class Automted_Market_Maker():
         return self._invariant
 
     def set_invariant(self) -> None:
-        if self._type == "CPF":
+        if self._swap_type == "CPF":
             self._invariant = self._base_token_amount * self._quote_token_amount
 
     def exchange_rate(self) -> float:
@@ -89,7 +89,7 @@ class Automted_Market_Maker():
             float: _description_
         """
         self._base_token_amount, self._quote_token_amount, _ = self.calculate_params(
-            token=output_token, amount=amount, type="exact_output"
+            token=output_token, amount=amount, swap_type="exact_output"
         )
 
     def exact_input_swap(self, input_token: Token, amount: int) -> None:
@@ -103,7 +103,7 @@ class Automted_Market_Maker():
             float: _description_
         """
         self._base_token_amount, self._quote_token_amount, _ = self.calculate_params(
-            token=input_token, amount=amount, type="exact_input"
+            token=input_token, amount=amount, swap_type="exact_input"
         )
 
     def exact_input_swap_slippage(self, input_token: Token, amount: int) -> float:
@@ -117,7 +117,7 @@ class Automted_Market_Maker():
             float: _description_
         """
         _, _, slippage = self.calculate_params(
-            token=input_token, amount=amount, type="exact_input"
+            token=input_token, amount=amount, swap_type="exact_input"
         )
         return slippage
 
@@ -135,12 +135,12 @@ class Automted_Market_Maker():
             float: _description_
         """
         _, _, slippage = self.calculate_params(
-            token=output_token, amount=amount, type="exact_output"
+            token=output_token, amount=amount, swap_type="exact_output"
         )
         return slippage
 
-    def calculate_params(self, token: Token, amount: int, type: str = "exact_output") -> tuple[float, float, float]:
-        if (token.name == self.base_token.name) & (type == "exact_output"):
+    def calculate_params(self, token: Token, amount: int, swap_type: str = "exact_output") -> tuple[float, float, float]:
+        if (token.name == self.base_token.name) & (swap_type == "exact_output"):
             # does the swap with the base token as output
             if amount < self._base_token_amount:
                 _base_token_amount = self.base_token_amount - amount
@@ -149,7 +149,7 @@ class Automted_Market_Maker():
                 raise Exception(
                     "Swap amount must be smaller than the amount of base tokens in the pool.")
 
-        elif (token.name == self.quote_token.name) & (type == "exact_output"):
+        elif (token.name == self.quote_token.name) & (swap_type == "exact_output"):
             if amount < self._quote_token_amount:
                 _quote_token_amount = self._quote_token_amount - amount
                 _base_token_amount = self.invariant / _quote_token_amount
@@ -157,12 +157,12 @@ class Automted_Market_Maker():
                 raise Exception(
                     "Swap amount must be smaller than the amount of base tokens in the pool.")
 
-        elif (token.name == self.base_token.name) & (type == "exact_input"):
+        elif (token.name == self.base_token.name) & (swap_type == "exact_input"):
             # does the swap with the base token as output
             _base_token_amount = self.base_token_amount + amount
             _quote_token_amount = self.invariant / _base_token_amount
 
-        elif (token.name == self.quote_token.name) & (type == "exact_input"):
+        elif (token.name == self.quote_token.name) & (swap_type == "exact_input"):
             _quote_token_amount = self._quote_token_amount + amount
             _base_token_amount = self.invariant / _quote_token_amount
 
