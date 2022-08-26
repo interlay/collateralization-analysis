@@ -1,4 +1,7 @@
 #%%
+import repackage
+repackage.up(2)
+
 from data.data_request import Token, Token_Pair
 from analysis.analysis import Analysis
 from simulation.simulation import Simulation
@@ -15,7 +18,7 @@ usd_btc = Token_Pair(btc, usd) #Note: the price query will be inverted to get th
 lksm_usd.get_prices()
 lksm_usd.calculate_returns()
 
-ksm_usd.get_prices()
+ksm_usd.get_prices(start_date="2019-09-19")
 ksm_usd.calculate_returns()
 
 ksm_btc.get_prices(start_date="2019-09-19")
@@ -153,7 +156,7 @@ sim.simulate(
 # Analize the results
 # Initialize the analysis
 simple_analysis = Analysis(sim)
-alpha = 0.999
+alpha = 0.99
 
 thresholds = {
     "liquidation": 
