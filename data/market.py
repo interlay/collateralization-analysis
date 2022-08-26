@@ -1,6 +1,6 @@
 from numpy import kaiser
 from data.data_request import Token
-
+from typing import Tuple
 
 class Automted_Market_Maker():
     """
@@ -139,7 +139,7 @@ class Automted_Market_Maker():
         )
         return slippage
 
-    def calculate_params(self, token: Token, amount: int, swap_type: str = "exact_output") -> tuple[float, float, float]:
+    def calculate_params(self, token: Token, amount: int, swap_type: str = "exact_output") -> Tuple[float, float, float]:
         if (token.name == self.base_token.name) & (swap_type == "exact_output"):
             # does the swap with the base token as output
             if amount < self._base_token_amount:
