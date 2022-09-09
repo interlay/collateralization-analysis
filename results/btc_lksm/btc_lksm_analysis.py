@@ -6,6 +6,7 @@ from data.data_request import Token, Token_Pair
 from analysis.analysis import Analysis
 from simulation.simulation import Simulation
 import pandas as pd
+import datetime
 
 ksm, lksm, btc, usd = Token("kusama", "KSM"), Token("liquid-ksm", "LKSM"), Token("bitcoin", "BTC"), Token("dollar", "USD")
 
@@ -30,8 +31,8 @@ print(
 )
 
 print(
-    f"The annualized volatility of KSM for the period from {ksm_usd.returns.index[0]} \
-    until {ksm_usd.returns.index[-1]} is {round(ksm_usd.returns.std()[0]*365**0.5,4)*100}% \n"
+    f"The annualized volatility of KSM for the period from {lksm_usd.returns.index[0]} \
+    until {lksm_usd.returns.index[-1]} is {round(ksm_usd.returns.loc[lksm_usd.returns.index[0]:lksm_usd.returns.index[-1],].std()[0]*365**0.5,4)*100}% \n"
 )
 
 returns = pd.concat([lksm_usd.returns, ksm_usd.returns], axis=1).dropna()
@@ -39,7 +40,7 @@ returns.columns = ["LKSM Returns", "KSM Returns"]
 corr = returns.corr()["LKSM Returns"]["KSM Returns"]
 print(f"The correlation between LKSM and KSM is {round(corr,3)}")
 print(
-    f"The part of the variance unexplained by linear correlation between LKSM and KSM is {round((1-corr**2)*100,1)}%)"
+    f"The part of the variance unexplained by linear correlation between LKSM and KSM is {round((1-corr**2)*100,1)}%"
 )
 
 #%%
@@ -80,43 +81,32 @@ returns.index = returns.index.astype(int) / 10**9
 returns.reset_index(inplace=True)
 returns.plot.scatter(x="inverse BTC Returns", y = "KSM Returns", c="Date", colormap="viridis", sharex=False)
 #%%
-# Based on the above comparison of LKSM and KSM, we're using KSM as a proxy for LKSM for
-# the rest of this analysis, with the exception of the liquidity, for which we'll be using LKSM.
-#
-# BTC is the debt in the system and if BTC increases in price, the over-collateralization ratio drops
-# Vice versa, if the price of KSM decreases, the collateralization ratio drops.
-#
-# To model this, we get the KSM/BTC price to have KSM as base currency (=collateral) and BTC as quote currency (=debt).
-# We then select the n-th worst trajectorie of the price quotation .
+# The graph indicates that the correlation between KSM and BTC increased over time
+returns.set_index("Date", inplace=True)
+returns.index = pd.to_datetime(returns.index.values, unit="s")
 
-# the std scaled by the square-root of time, 365 days to annulize it, **0.5 to square it
-print("These numbers are based on the KSM/BTC pair from the lib:")
-print(f"The data ranges from {ksm_btc.prices.index[0]} to {ksm_btc.prices.index[-1]}")
-
-print(f"BTC/KSM had an annualized std of {ksm_btc.returns.std()[0] *365**0.5}")
-print(f"BTC/KSM had an annualized arithmetic mean return of {ksm_btc.calculate_mean_return(type='arithmetic')}")
-print(f"BTC/KSM had a total return of {ksm_btc.prices.iloc[-1,0] / ksm_btc.prices.iloc[0,0] -1}")
-
-prices = pd.concat([usd_btc.prices, ksm_usd.prices], axis= 1).dropna()
-prices.columns = ["BTC/USD", "USD/KSM"]
-btc_ksm_prices = prices["BTC/USD"] * prices["USD/KSM"]
-btc_ksm_prices.columns = ["manual_price"]
-btc_ksm_returns = btc_ksm_prices.pct_change()
-
-print("\n These numbers are based on the KSM/BTC pair from the manual check:")
-print(f"The data ranges from {btc_ksm_returns.index[0]} to {btc_ksm_returns.index[-1]}")
-print(f"BTC/KSM had an annualized std of {btc_ksm_returns.std() *365**0.5}")
-print(f"BTC/KSM had an annualized arithmetic mean return of {btc_ksm_returns.mean() *365}")
-print(
-    f"BTC/KSM had a total return of {btc_ksm_prices.iloc[-1] / btc_ksm_prices.iloc[0] -1}"
-)
-
-# Result: this is correct!
-# The slight difference arise from different end time and rounding errors
 
 #%%
+end_date = returns.index[-1]
+while end_date in returns.index:
+    start_date = end_date - pd.Timedelta("365D") if end_date - pd.Timedelta("365D") in returns.index else returns.index[0]
+    print(f"""The correlation between KSM and BTC between {start_date} and {end_date} was {returns.loc[start_date:end_date,].corr()["inverse BTC Returns"]["KSM Returns"]}""")
+    print(f"The volatility of KSM/USD over the same period was {returns.loc[start_date:end_date,'KSM Returns'].std()*365**0.5 * 100}%")
+    print(f"The volatility of BTC/USD over the same period was {(1/(1+returns.loc[start_date:end_date,'inverse BTC Returns'])-1).std()*365**0.5*100}%")
+    print(f"The volatility of KSM/BTC over the same period was {ksm_btc.returns.loc[start_date:end_date,].values.std()*365**0.5*100}% \n")
+    end_date -= pd.Timedelta("365D")
+
+#%%
+# Based on the above comparison of LKSM and KSM, we're using KSM as a proxy for LKSM for
+# the rest of this analysis, with the exception of the liquidity, for which we'll be using LKSM.
+# Futhermore, the annual comparison showed that with the maturity of both, KSM and BTC, the volatility
+# decreased and correlation increased. To better reflect this, we'll be using the past 2 years as sample.
+#
 # analysing the historic returns for USD/BTC, KSM/USD and KSM/BTC
 for pair in [usd_btc, ksm_usd, ksm_btc]:
+    pair.get_prices(start_date=(datetime.datetime.today() - pd.Timedelta("730D")).strftime("%Y-%m-%d"))
+    pair.calculate_returns()
+
     pair_ticker = f"{pair.base_token.ticker}/{pair.quote_token.ticker}"
     
     print(f"""The distribution of {pair_ticker} has:
@@ -137,7 +127,13 @@ liquidity_adjustment = 1 / (1-0.38)
 print(
     f"The estimated liquidity adjustment is ~{int(liquidity_adjustment * 100)}% of the debt value"
 )
-
+#%%
+# BTC is the debt in the system and if BTC increases in price, the over-collateralization ratio drops
+# Vice versa, if the price of KSM decreases, the collateralization ratio drops.
+#
+# To model this, we get the KSM/BTC price to have KSM as base currency (=collateral) and BTC as quote currency (=debt).
+# We then select the n-th worst trajectorie of the price quotation.
+#
 # Initialize and run the simulation: Each path represents the price change of the collateral/debt
 # We simulate 10,000 trajectories with a duration of 7 days and 24 hours each
 # and assume a normal distribution (GBM) with the mean of zero and std of the KSM/BTC ksm_btc over the past ~3 years
