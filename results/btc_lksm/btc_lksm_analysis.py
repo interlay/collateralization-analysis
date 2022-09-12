@@ -145,7 +145,7 @@ sim.simulate(
     mu=0,
 )
 
-
+#%%
 # Analize the results
 # Initialize the analysis
 simple_analysis = Analysis(sim)
@@ -155,36 +155,31 @@ thresholds = {
     "liquidation": 
         {
             "periods" : 7,
-            "threshold" : None
+            "analytical_threshold" : None,
+            "historical_threshold" : None
         },
     "premium_redeem": 
         {
             "periods" : 10,
-            "threshold" : None
+            "analytical_threshold" : None,
+            "historical_threshold" : None
         },
     "safe_mint": 
         {
             "periods" : 21,
-            "threshold" : None
+            "analytical_threshold" : None,
+            "historical_threshold" : None
         }
 }
 
-for key in thresholds.keys():
-    thresholds[key]["threshold"] = simple_analysis.get_threshold_multiplier(alpha=alpha, at_step = thresholds[key]["periods"]) * liquidity_adjustment
-
-print(thresholds)
-
-#%%
-# analysing the historic VaR for KSM/BTC as a sanity check
-durations_in_days = [7,10,21]
-
-for duration in durations_in_days:
-    hist_var = ksm_btc.prices.pct_change(duration).dropna()
+for key, threshold in thresholds.items():
+    threshold["analytical_threshold"] = simple_analysis.get_threshold_multiplier(alpha=alpha, at_step = thresholds[key]["periods"]) * liquidity_adjustment
+    hist_var = ksm_btc.prices.pct_change(threshold["periods"]).dropna()
     hist_var = hist_var.sort_values("Price", ascending=False)
-    var_alpha = hist_var.iloc[int(len(hist_var) * alpha),]
+    threshold["historical_threshold"] = 1/(1+hist_var.iloc[int(len(hist_var) * alpha),][0]) * liquidity_adjustment
     
-    print(f"The historic VaR for a confidence level of {alpha*100}% of KSM/BTC for {duration} days was: {round(var_alpha[0] *100,3)}% \n")
-    print(f"The thresholds based on historic VaR adjusted for liquidity are : {1/ (1 + var_alpha[0]) * liquidity_adjustment}")
+    print(f"The {key} threshold based on the analytical VaR for a confidence level of {alpha*100}% of KSM/BTC over {threshold['periods']} is: {round(threshold['analytical_threshold'] *100,3)}%")
+    print(f"The {key} threshold based on the historic VaR for a confidence level of {alpha*100}% of KSM/BTC over {threshold['periods']} is: {round(threshold['historical_threshold'] *100,3)}% \n")
 
 # Result: The VaR from the historic approach is higher than for the GBM simulation as expected in this case.
 # The reason for this is that the montecarlo simulation more closely assambles a normal distribution, while the
