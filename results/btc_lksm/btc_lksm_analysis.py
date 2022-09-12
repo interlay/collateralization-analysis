@@ -85,12 +85,10 @@ returns.plot.scatter(x="inverse BTC Returns", y = "KSM Returns", c="Date", color
 returns.set_index("Date", inplace=True)
 returns.index = pd.to_datetime(returns.index.values, unit="s")
 
-
-#%%
 end_date = returns.index[-1]
 while end_date in returns.index:
     start_date = end_date - pd.Timedelta("365D") if end_date - pd.Timedelta("365D") in returns.index else returns.index[0]
-    print(f"""The correlation between KSM and BTC between {start_date} and {end_date} was {returns.loc[start_date:end_date,].corr()["inverse BTC Returns"]["KSM Returns"]}""")
+    print(f"""The correlation between KSM/USD and USD/BTC between {start_date} and {end_date} was {returns.loc[start_date:end_date,].corr()["inverse BTC Returns"]["KSM Returns"]}""")
     print(f"The volatility of KSM/USD over the same period was {returns.loc[start_date:end_date,'KSM Returns'].std()*365**0.5 * 100}%")
     print(f"The volatility of BTC/USD over the same period was {(1/(1+returns.loc[start_date:end_date,'inverse BTC Returns'])-1).std()*365**0.5*100}%")
     print(f"The volatility of KSM/BTC over the same period was {ksm_btc.returns.loc[start_date:end_date,].values.std()*365**0.5*100}% \n")
@@ -135,7 +133,7 @@ print(
 # We then select the n-th worst trajectorie of the price quotation.
 #
 # Initialize and run the simulation: Each path represents the price change of the collateral/debt
-# We simulate 10,000 trajectories with a duration of 7 days and 24 hours each
+# We simulate 10,000 trajectories with a duration of 21
 # and assume a normal distribution (GBM) with the mean of zero and std of the KSM/BTC ksm_btc over the past ~3 years
 sim = Simulation(ksm_btc, strategy="GBM")
 sim.simulate(
@@ -166,7 +164,7 @@ thresholds = {
         },
     "safe_mint": 
         {
-            "periods" : 14,
+            "periods" : 21,
             "threshold" : None
         }
 }
@@ -178,14 +176,14 @@ print(thresholds)
 
 #%%
 # analysing the historic VaR for KSM/BTC as a sanity check
-durations_in_days = [7,10,14]
+durations_in_days = [7,10,21]
 
 for duration in durations_in_days:
     hist_var = ksm_btc.prices.pct_change(duration).dropna()
     hist_var = hist_var.sort_values("Price", ascending=False)
     var_alpha = hist_var.iloc[int(len(hist_var) * alpha),]
     
-    print(f"The historic VaR for a confidence level of {alpha*100}% of KSM/BTC for {duration}] days was: {round(var_alpha[0] *100,3)}% \n")
+    print(f"The historic VaR for a confidence level of {alpha*100}% of KSM/BTC for {duration} days was: {round(var_alpha[0] *100,3)}% \n")
     print(f"The thresholds based on historic VaR adjusted for liquidity are : {1/ (1 + var_alpha[0]) * liquidity_adjustment}")
 
 # Result: The VaR from the historic approach is higher than for the GBM simulation as expected in this case.
