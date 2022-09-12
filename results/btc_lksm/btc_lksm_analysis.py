@@ -133,13 +133,13 @@ print(
 # We then select the n-th worst trajectorie of the price quotation.
 #
 # Initialize and run the simulation: Each path represents the price change of the collateral/debt
-# We simulate 10,000 trajectories with a duration of 21
+# We simulate 20,000 trajectories with a duration of 21
 # and assume a normal distribution (GBM) with the mean of zero and std of the KSM/BTC ksm_btc over the past ~3 years
 sim = Simulation(ksm_btc, strategy="GBM")
 sim.simulate(
     steps=1,
     maturity=21,
-    n_simulations=10_000,
+    n_simulations=20_000,
     initial_value=1,
     sigma=ksm_btc.returns.std()[0],
     mu=0,
