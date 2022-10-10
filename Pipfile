@@ -11,6 +11,7 @@ quantlib = "*"
 numpy = "*"
 pytest = "*"
 repackage = "*"
+PyYAML = "*"
 
 [dev-packages]
 ipykernel = "*"

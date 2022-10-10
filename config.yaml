@@ -1,0 +1,9 @@
+analysis:
+  alpha: 0.99
+  n_simulations: 20_000
+  historical_sample_period: 365d
+  thresholds:
+    periods:
+      liquidation: 7
+      premium_redeem: 14
+      safe_mint: 21
