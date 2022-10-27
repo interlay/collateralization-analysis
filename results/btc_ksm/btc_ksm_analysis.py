@@ -65,7 +65,7 @@ thresholds = {
         }
 }
 
-liquidity_adjustment = 1 # no slippage adjustment
+liquidity_adjustment = 0.03 # slippage for trading $175,000 LSKM into KSM on Karura.
 
 for key, threshold in thresholds.items():
     threshold["analytical_threshold"] = simple_analysis.get_threshold_multiplier(

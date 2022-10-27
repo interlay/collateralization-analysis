@@ -98,11 +98,11 @@ while end_date in returns.index:
 # Based on the above comparison of LKSM and KSM, we're using KSM as a proxy for LKSM for
 # the rest of this analysis, with the exception of the liquidity, for which we'll be using LKSM.
 # Futhermore, the annual comparison showed that with the maturity of both, KSM and BTC, the volatility
-# decreased and correlation increased. To better reflect this, we'll be using the past 2 years as sample.
+# decreased and correlation increased. To better reflect this, we'll be using the past 1 year as sample.
 #
 # analysing the historic returns for USD/BTC, KSM/USD and KSM/BTC
 for pair in [usd_btc, ksm_usd, ksm_btc]:
-    pair.get_prices(start_date=(datetime.datetime.today() - pd.Timedelta("730D")).strftime("%Y-%m-%d"))
+    pair.get_prices(start_date=(datetime.datetime.today() - pd.Timedelta("365D")).strftime("%Y-%m-%d"))
     pair.calculate_returns()
 
     pair_ticker = f"{pair.base_token.ticker}/{pair.quote_token.ticker}"
@@ -118,10 +118,10 @@ for pair in [usd_btc, ksm_usd, ksm_btc]:
 # The current TVL on Kintsugi is ~$1.75m USD locked in collateral.
 # Starting with a 10% debt ceiling would mean to have a maximum of $175,000 worth of LKSM as collateral
 # Assuming a worst case scenario where all LKSM is held by a single vault (or multiple vaults with similar liquidation price),
-# would require a fire sale of the $175,000 LKSM.
-# This would incure an estimated slippage of ~38% which means that all thresholds need to be adjusted accordingly
+# would require a fire sale of the $175,000 LKSM. The most liquid swap would be into KSM and from there into other assets.
+# This would incure an estimated slippage of ~3% which means that all thresholds need to be adjusted accordingly
 
-liquidity_adjustment = 1 / (1-0.38)
+liquidity_adjustment = 1 / (1-0.03) # slippage for trading $175,000 LSKM into KSM on Karura.
 print(
     f"The estimated liquidity adjustment is ~{int(liquidity_adjustment * 100)}% of the debt value"
 )
