@@ -125,6 +125,24 @@ liquidity_adjustment = 1 / (1-0.03) # slippage for trading $175,000 LSKM into KS
 print(
     f"The estimated liquidity adjustment is ~{int(liquidity_adjustment * 100)}% of the debt value"
 )
+
+lksm_usd.returns.rename(columns={"Price":"LKSM_Returns"}, inplace=True)
+ksm_usd.returns.rename(columns={"Price":"KSM_Returns"}, inplace=True)
+
+cum_returns = (lksm_usd.returns+1).join((ksm_usd.returns+1)).cumprod().dropna()
+lksm_depeg = max(abs(cum_returns.KSM_Returns - cum_returns.LKSM_Returns))
+
+stETH_depeg = 0.07 # based on the max historic depeg of stETH vs ETH
+
+depeg_risk_adjustment = 1 / (1-max(lksm_depeg, stETH_depeg)) 
+print(
+    f"The estimated depeg risk adjustment is ~{int(depeg_risk_adjustment * 100)}% of the debt value"
+)
+
+total_risk_adjustment = depeg_risk_adjustment * liquidity_adjustment
+print(
+    f"The estimated total risk adjustment is ~{int(total_risk_adjustment * 100)}% of the debt value"
+)
 #%%
 # BTC is the debt in the system and if BTC increases in price, the over-collateralization ratio drops
 # Vice versa, if the price of KSM decreases, the collateralization ratio drops.
@@ -160,7 +178,7 @@ thresholds = {
         },
     "premium_redeem": 
         {
-            "periods" : 10,
+            "periods" : 14,
             "analytical_threshold" : None,
             "historical_threshold" : None
         },
@@ -173,10 +191,10 @@ thresholds = {
 }
 
 for key, threshold in thresholds.items():
-    threshold["analytical_threshold"] = simple_analysis.get_threshold_multiplier(alpha=alpha, at_step = thresholds[key]["periods"]) * liquidity_adjustment
+    threshold["analytical_threshold"] = simple_analysis.get_threshold_multiplier(alpha=alpha, at_step = thresholds[key]["periods"]) * total_risk_adjustment
     hist_var = ksm_btc.prices.pct_change(threshold["periods"]).dropna()
     hist_var = hist_var.sort_values("Price", ascending=False)
-    threshold["historical_threshold"] = 1/(1+hist_var.iloc[int(len(hist_var) * alpha),][0]) * liquidity_adjustment
+    threshold["historical_threshold"] = 1/(1+hist_var.iloc[int(len(hist_var) * alpha),][0]) * total_risk_adjustment
     
     print(f"The {key} threshold based on the analytical VaR for a confidence level of {alpha*100}% of KSM/BTC over {threshold['periods']} is: {round(threshold['analytical_threshold'] *100,3)}%")
     print(f"The {key} threshold based on the historic VaR for a confidence level of {alpha*100}% of KSM/BTC over {threshold['periods']} is: {round(threshold['historical_threshold'] *100,3)}% \n")
