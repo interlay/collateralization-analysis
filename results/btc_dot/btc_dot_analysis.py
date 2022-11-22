@@ -1,5 +1,6 @@
 # %%
 import repackage
+
 repackage.up(2)
 
 import yaml
@@ -7,16 +8,17 @@ from data.data_request import Token, Token_Pair
 from analysis.analysis import Analysis
 from simulation.simulation import Simulation
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 
-with open('../../config.yaml') as f:
+with open("../../config.yaml") as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
-    
+
 btc = Token("bitcoin", "BTC")
 dot = Token("polkadot", "DOT")
 
-start_date = (datetime.today() - pd.Timedelta(
-    config["analysis"]["historical_sample_period"])).strftime("%Y-%m-%d")
+start_date = (
+    datetime.today() - timedelta(config["analysis"]["historical_sample_period"])
+).strftime("%Y-%m-%d")
 
 dot_btc = Token_Pair(dot, btc)
 dot_btc.get_prices(start_date=start_date)
@@ -48,33 +50,41 @@ sim.simulate(
 simple_analysis = Analysis(sim)
 
 thresholds = {
-    "liquidation": 
-        {
-            "analytical_threshold" : None,
-            "historical_threshold" : None
-        },
-    "premium_redeem": 
-        {
-            "analytical_threshold" : None,
-            "historical_threshold" : None
-        },
-    "safe_mint": 
-        {
-            "analytical_threshold" : None,
-            "historical_threshold" : None
-        }
+    "liquidation": {"analytical_threshold": None, "historical_threshold": None},
+    "premium_redeem": {"analytical_threshold": None, "historical_threshold": None},
+    "safe_mint": {"analytical_threshold": None, "historical_threshold": None},
 }
 
-liquidity_adjustment = 1 # no slippage adjustment
+liquidity_adjustment = 1  # no slippage adjustment
 
 for key, threshold in thresholds.items():
-    threshold["analytical_threshold"] = simple_analysis.get_threshold_multiplier(
-        alpha=config["analysis"]["alpha"], at_step = config["analysis"]["thresholds"]["periods"][key]) * liquidity_adjustment
-    hist_var = dot_btc.prices.pct_change(config["analysis"]["thresholds"]["periods"][key]).dropna()
+    threshold["analytical_threshold"] = (
+        simple_analysis.get_threshold_multiplier(
+            alpha=config["analysis"]["alpha"],
+            at_step=config["analysis"]["thresholds"]["periods"][key],
+        )
+        * liquidity_adjustment
+    )
+    hist_var = dot_btc.prices.pct_change(
+        config["analysis"]["thresholds"]["periods"][key]
+    ).dropna()
     hist_var = hist_var.sort_values("Price", ascending=False)
-    threshold["historical_threshold"] = 1/(1+hist_var.iloc[int(len(hist_var) * config['analysis']['alpha']),][0]) * liquidity_adjustment
-    
-    print(f"The {key} threshold based on the analytical VaR for a confidence level of {config['analysis']['alpha']*100}% of DOT/BTC over {config['analysis']['thresholds']['periods'][key]} days is: {round(threshold['analytical_threshold'] *100,3)}%")
-    print(f"The {key} threshold based on the historic VaR for a confidence level of {config['analysis']['alpha']*100}% of DOT/BTC over {config['analysis']['thresholds']['periods'][key]} days is: {round(threshold['historical_threshold'] *100,3)}% \n")
+    threshold["historical_threshold"] = (
+        1
+        / (
+            1
+            + hist_var.iloc[
+                int(len(hist_var) * config["analysis"]["alpha"]),
+            ][0]
+        )
+        * liquidity_adjustment
+    )
+
+    print(
+        f"The {key} threshold based on the analytical VaR for a confidence level of {config['analysis']['alpha']*100}% of DOT/BTC over {config['analysis']['thresholds']['periods'][key]} days is: {round(threshold['analytical_threshold'] *100,3)}%"
+    )
+    print(
+        f"The {key} threshold based on the historic VaR for a confidence level of {config['analysis']['alpha']*100}% of DOT/BTC over {config['analysis']['thresholds']['periods'][key]} days is: {round(threshold['historical_threshold'] *100,3)}% \n"
+    )
 
 # %%

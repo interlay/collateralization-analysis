@@ -7,8 +7,7 @@ import yaml
 from data.data_request import Token, Token_Pair
 from analysis.analysis import Analysis
 from simulation.simulation import Simulation
-import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 
 with open("../../config.yaml") as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
@@ -17,7 +16,7 @@ btc = Token("bitcoin", "BTC")
 stKSM = Token("kusama", "KSM")
 
 start_date = (
-    datetime.today() - pd.Timedelta(config["analysis"]["historical_sample_period"])
+    datetime.today() - timedelta(config["analysis"]["historical_sample_period"])
 ).strftime("%Y-%m-%d")
 
 ksm_btc = Token_Pair(stKSM, btc)
@@ -68,25 +67,9 @@ print(
     f"The estimated liquidity adjustment is ~{int(liquidity_adjustment * 100)}% of the debt value"
 )
 
-usd = Token("dollar", "usd")
-ksm = Token("kusama", "ksm")
-stksm_usd = Token_Pair(stKSM, usd)
-ksm_usd = Token_Pair(ksm, usd)
-stksm_usd.get_prices(start_date=start_date)
-ksm_usd.get_prices(start_date=start_date)
-
-stksm_usd.calculate_returns()
-ksm_usd.calculate_returns()
-
-stksm_usd.returns.rename(columns={"Price": "stKSM_Returns"}, inplace=True)
-ksm_usd.returns.rename(columns={"Price": "KSM_Returns"}, inplace=True)
-
-cum_returns = (stksm_usd.returns + 1).join((ksm_usd.returns + 1)).cumprod().dropna()
-stksm_usd = max(abs(cum_returns.KSM_Returns - cum_returns.stKSM_Returns))
-
 stETH_depeg = 0.07  # based on the max historic depeg of stETH vs ETH
 
-depeg_risk_adjustment = 1 / (1 - max(stksm_usd, stETH_depeg))
+depeg_risk_adjustment = 1 / (1 - stETH_depeg)
 print(
     f"The estimated depeg risk adjustment is ~{int(depeg_risk_adjustment * 100)}% of the debt value"
 )

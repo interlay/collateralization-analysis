@@ -8,7 +8,7 @@ from data.data_request import Token, Token_Pair
 from analysis.analysis import Analysis
 from simulation.simulation import Simulation
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 
 with open("../../config.yaml") as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
@@ -102,8 +102,9 @@ returns.index = pd.to_datetime(returns.index.values, unit="s")
 end_date = returns.index[-1]
 while end_date in returns.index:
     start_date = (
-        end_date - pd.Timedelta("365D")
-        if end_date - pd.Timedelta("365D") in returns.index
+        end_date - timedelta(config["analysis"]["historical_sample_period"])
+        if end_date - timedelta(config["analysis"]["historical_sample_period"])
+        in returns.index
         else returns.index[0]
     )
     print(
@@ -118,7 +119,7 @@ while end_date in returns.index:
     print(
         f"The volatility of KSM/BTC over the same period was {ksm_btc.returns.loc[start_date:end_date,].values.std()*365**0.5*100}% \n"
     )
-    end_date -= pd.Timedelta("365D")
+    end_date -= timedelta(config["analysis"]["historical_sample_period"])
 
 #%%
 # Based on the above comparison of LKSM and KSM, we're using KSM as a proxy for LKSM for
@@ -129,7 +130,9 @@ while end_date in returns.index:
 # analysing the historic returns for USD/BTC, KSM/USD and KSM/BTC
 for pair in [usd_btc, ksm_usd, ksm_btc]:
     pair.get_prices(
-        start_date=(datetime.today() - pd.Timedelta("365D")).strftime("%Y-%m-%d")
+        start_date=(
+            datetime.today() - timedelta(config["analysis"]["historical_sample_period"])
+        ).strftime("%Y-%m-%d")
     )
     pair.calculate_returns()
 
