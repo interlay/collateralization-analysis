@@ -1,63 +1,126 @@
+# %%
+import yaml
 from data.data_request import Token, Token_Pair
 from analysis.analysis import Analysis
 from simulation.simulation import Simulation
+from datetime import datetime, timedelta
+from helper import round_up_to_nearest_5, get_total_risk_adjustment
+import logging
+import sys
 
+with open("config.yaml") as f:
+    config = yaml.load(f, Loader=yaml.FullLoader)
 
-quote_currency = Token("usd", "USD")
-base_currency = Token("bitcoin", "BTC")
+ALPHA = config["analysis"]["alpha"]
+PERIODS = config["analysis"]["thresholds"]["periods"]
 
-token_pair = Token_Pair(base_currency, quote_currency)
-token_pair.get_prices(start_date="2017-07-01", inverse=True)
-token_pair.calculate_returns()
+btc = Token("bitcoin", "btc")
+start_date = (
+    datetime.today() - timedelta(config["analysis"]["historical_sample_period"])
+).strftime("%Y-%m-%d")
 
-print(f"{token_pair.base_token.ticker}/{token_pair.quote_token.ticker} had an annualized std of {token_pair.returns.std()[0] *365**0.5}")
-print(f"{token_pair.base_token.ticker}/{token_pair.quote_token.ticker} had an annualized mean return of {token_pair.calculate_mean_return()}")
+logger = logging.getLogger()
+logging.basicConfig(filename="analysis.log", level=logging.DEBUG)
+consoleHandler = logging.StreamHandler(sys.stdout)
+consoleHandler.setLevel(logging.INFO)
+logger.addHandler(consoleHandler)
+# fileHandler = logging.FileHandler("analysis.log")
+# fileHandler.setLevel(logging.DEBUG)
+# logger.addHandler(fileHandler)
 
-# Initialize and run the simulation: Each path represents the price change of the collateral/debt
-# We simulate 10,000 trajectories with a duration of 7 days and hourly steps each
-# and assume a normal distribution (GBM) with the mean and std of the pair over the past 5 years
-sim = Simulation(token_pair, strategy="GBM")
-sim.simulate(steps=24,
-             maturity=7,
-             n_simulations=10_000,
-             initial_value=1,
-             sigma=token_pair.returns.std()[0],
-             mu=token_pair.calculate_mean_return(type="arithmetic", standardization_period="daily"))
+logging.info(f"Date of the analysis: {datetime.today()}")
+logging.info("====================================================================")
+logging.info("Start running the collateral analysis with the following parameters:")
+logging.info(
+    f"""
+    Confidence level (alpha):   {ALPHA*100}%
+    Number of path simulations: {config["analysis"]["n_simulations"]}
+    Historical sample period:   {config["analysis"]["historical_sample_period"]}
+    Threshold period in days:
+        Safe Mint:              {PERIODS["liquidation"]}
+        Premium Redeem:         {PERIODS["premium_redeem"]}
+        Liquidations:           {PERIODS["safe_mint"]}
+    """
+)
+logging.info("====================================================================")
 
+for ticker, token in config["collateral"].items():
+    logging.info(f"Start analysing {ticker}...")
+    # BTC is the debt in the system and if BTC increases in price, the over-collateralization ratio drops
+    # Vice versa, if the price of TOKEN decreases, the collateralization ratio drops.
+    #
+    # To model this, we get the TOKEN/BTC price to have TOKEN as base currency (=collateral) and BTC as quote currency (=debt).
+    # We then select the n-th worst trajectorie of the price quotation.
 
-# Analize the results
-# Initialize the analysis
-simple_analysis = Analysis(sim)
+    if token.get("proxy"):
+        proxy_ticker, proxy_name = next(iter(token.get("proxy").items()))
+        token_pair = Token_Pair(Token(proxy_name, proxy_ticker), btc)
+    else:
+        token_pair = Token_Pair(Token(token["name"], ticker), btc)
+    token_pair.get_prices(start_date=start_date)
+    token_pair.calculate_returns()
 
-# This gives us the secure threshold multiplier, stating that:
-# The collateral/debt ratio will fall below 1 only with a 0.1% chance in 7 days or...
-# This assumes no premium redeem, additional collateralization or liquidation.
-liquidation_threshold_margin = simple_analysis.get_threshold_multiplier(alpha=0.999) # <- this can be changed ofc 
-premium_redeem_threshold_margin = simple_analysis.get_threshold_multiplier(alpha=0.90) # <- this can be changed ofc 
+    # Initialize and run the simulation: Each path represents the price change of the collateral/debt
+    # We simulate N trajectories with a duration of T days and daily steps
+    # and assume a normal distribution (GBM) with the std of the pair over the past sample
+    # period and a mean of 0.
+    sim = Simulation(token_pair, strategy="GBM")
+    sim.simulate(
+        steps=1,
+        maturity=PERIODS["safe_mint"],
+        n_simulations=config["analysis"]["n_simulations"],
+        initial_value=1,
+        sigma=token_pair.returns.std()[0],
+        mu=0,
+    )
 
-print(f"The estimated liquidation threshold is ~{int(liquidation_threshold_margin * 100)}% of the debt value")
-print(f"The estimated premium redeem threshold is ~{int(liquidation_threshold_margin * premium_redeem_threshold_margin * 100)}% of the debt value")
+    total_risk_adjustment = get_total_risk_adjustment(ticker, config)
 
+    # Initialize the analysis
+    simple_analysis = Analysis(sim)
 
-# Initialize and run the simulation: Each path represents the price change of the collateral/debt
-# We simulate 10,000 trajectories with a duration of 21 days and hourly steps each
-# and assume a normal distribution (GBM) with the mean and std of token_pair over the past 5 years
-sim = Simulation(token_pair, strategy="GBM")
-sim.simulate(steps=24,
-             maturity=21,
-             n_simulations=10_000,
-             initial_value=1,
-             sigma=token_pair.returns.std()[0],
-             mu=token_pair.calculate_mean_return(type="arithmetic", standardization_period="daily"))
+    thresholds = {
+        "liquidation": {"analytical_threshold": None, "historical_threshold": None},
+        "premium_redeem": {"analytical_threshold": None, "historical_threshold": None},
+        "safe_mint": {"analytical_threshold": None, "historical_threshold": None},
+    }
 
+    # Get the threshold for each period using the historical and analytical
+    # method.
+    for key, threshold in thresholds.items():
+        threshold["analytical_threshold"] = (
+            simple_analysis.get_threshold_multiplier(
+                alpha=ALPHA,
+                at_step=PERIODS[key],
+            )
+            * total_risk_adjustment
+        )
+        hist_var = token_pair.prices.pct_change(PERIODS[key]).dropna()
+        hist_var = hist_var.sort_values("Price", ascending=False)
+        threshold["historical_threshold"] = (
+            1
+            / (
+                1
+                + hist_var.iloc[
+                    int(len(hist_var) * ALPHA),
+                ][0]
+            )
+            * total_risk_adjustment
+        )
 
-# Analize the results
-# Initialize the analysis
-simple_analysis = Analysis(sim)
+        # Use the max of both to be conservative and round UP to 5%.
+        rounded_threshold = round_up_to_nearest_5(
+            max(
+                threshold["historical_threshold"],
+                threshold["analytical_threshold"],
+            )
+            * 100
+        )
 
-# This gives us the secure threshold multiplier, stating that:
-# The collateral/debt ratio will fall below the liquidation_threshold_margin with a 10% chance in 21 days or...
-# This assumes no premium redeem, additional collateralization or liquidation.
-secure_threshold_margin = simple_analysis.get_threshold_multiplier(alpha=0.90) # <- this can be changed ofc 
-
-print(f"The estimated secure threshold is ~{int(liquidation_threshold_margin * secure_threshold_margin * 100)}% of the debt value")
+        logging.debug(
+            f"The {key} threshold based on the analytical VaR for a confidence level of {ALPHA*100}% of {ticker}/BTC over {PERIODS[key]} days is: {round(threshold['analytical_threshold'] *100,3)}%"
+        )
+        logging.debug(
+            f"The {key} threshold based on the historic VaR for a confidence level of {ALPHA*100}% of {ticker}/BTC over {PERIODS[key]} days is: {round(threshold['historical_threshold'] *100,3)}%"
+        )
+        logging.info(f"The suggested {key} threshold is {rounded_threshold}%")
