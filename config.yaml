@@ -7,3 +7,39 @@ analysis:
       liquidation: 7
       premium_redeem: 14
       safe_mint: 21
+
+collateral:
+  ticker: "dot"
+    name: "polkadot"
+    risk_adjustment:
+      liquidity_adjustment: 
+      depeg_adjustment:
+  ticker: "ksm"
+    name: "kusama"
+    risk_adjustment:
+      liquidity_adjustment: 
+      depeg_adjustment:
+  ticker: "stksm"
+    name: "lido-on-kusama"
+    proxy:
+      ticker: "ksm"
+      name: "kusama"
+    risk_adjustment:
+      liquidity_adjustment: 0.07
+      depeg_adjustment: 0.07
+  ticker: "lksm"
+    name: "liquid-ksm"
+    risk_adjustment: 
+      liquidity_adjustment: 0.03
+      depeg_adjustment: 0.07
+  ticker: "ausd"
+    name: "acala-dollar-acala"
+    risk_adjustment:
+      liquidity_adjustment: 
+      depeg_adjustment: 0.99
+  ticker: "ausd"
+    name: "acala-dollar"
+    risk_adjustment:
+      liquidity_adjustment: 
+      depeg_adjustment: 0.99
+
