@@ -74,7 +74,7 @@ for key, threshold in thresholds.items():
     hist_var = hist_var.sort_values("Price", ascending=False)
     threshold["historical_threshold"] = 1/(1+hist_var.iloc[int(len(hist_var) * config['analysis']['alpha']),][0]) * liquidity_adjustment
     
-    print(f"The {key} threshold based on the analytical VaR for a confidence level of {config['analysis']['alpha']*100}% of KSM/BTC over {config['analysis']['thresholds']['periods'][key]} is: {round(threshold['analytical_threshold'] *100,3)}%")
-    print(f"The {key} threshold based on the historic VaR for a confidence level of {config['analysis']['alpha']*100}% of KSM/BTC over {config['analysis']['thresholds']['periods'][key]} is: {round(threshold['historical_threshold'] *100,3)}% \n")
+    print(f"The {key} threshold based on the analytical VaR for a confidence level of {config['analysis']['alpha']*100}% of KSM/BTC over {config['analysis']['thresholds']['periods'][key]} days is: {round(threshold['analytical_threshold'] *100,3)}%")
+    print(f"The {key} threshold based on the historic VaR for a confidence level of {config['analysis']['alpha']*100}% of KSM/BTC over {config['analysis']['thresholds']['periods'][key]} days is: {round(threshold['historical_threshold'] *100,3)}% \n")
 
 # %%

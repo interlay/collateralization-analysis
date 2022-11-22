@@ -2,11 +2,15 @@
 import repackage
 repackage.up(2)
 
+import yaml
 from data.data_request import Token, Token_Pair
 from analysis.analysis import Analysis
 from simulation.simulation import Simulation
 import pandas as pd
 from datetime import datetime
+
+with open('../../config.yaml') as f:
+    config = yaml.load(f, Loader=yaml.FullLoader)
 
 quote_currency = Token("usd", "USD")
 base_currency = Token("acala-dollar", "aUSD")
@@ -44,51 +48,53 @@ while end_date in btc_usd.returns.index:
 # Initialize and run the simulation: Each path represents the price change of the collateral/debt
 # We simulate 20,000 trajectories with a duration of 21 days
 # and assume a normal distribution (GBM) with the std of bitcoin over the past 2 years
-start_date = (datetime.today() - pd.Timedelta("730D")).strftime("%Y-%m-%d")
+start_date = (datetime.today() - pd.Timedelta(config["analysis"]["historical_sample_period"])).strftime("%Y-%m-%d")
 btc_usd.get_prices(start_date=start_date, inverse=True)
 btc_usd.calculate_returns()
 
 sim = Simulation(btc_usd, strategy="GBM")
-sim.simulate(steps=1,
-             maturity=21,
-             n_simulations=20_000,
-             initial_value=1,
-             sigma=btc_usd.returns.std()[0],
-             mu=0)
+sim.simulate(
+    steps=1,
+    maturity=config["analysis"]["thresholds"]["periods"]["safe_mint"],
+    n_simulations=config["analysis"]["n_simulations"],
+    initial_value=1,
+    sigma=ausd_pair.returns.std()[0],
+    mu=0,
+)
 
 #%%
 # Analize the results
 # Initialize the analysis
 simple_analysis = Analysis(sim)
-alpha = 0.99
 
 thresholds = {
     "liquidation": 
         {
-            "periods" : 7,
             "analytical_threshold" : None,
             "historical_threshold" : None
         },
     "premium_redeem": 
         {
-            "periods" : 10,
             "analytical_threshold" : None,
             "historical_threshold" : None
         },
     "safe_mint": 
         {
-            "periods" : 21,
             "analytical_threshold" : None,
             "historical_threshold" : None
         }
 }
 
+liquidity_adjustment = 1 # no slippage adjustment
+
 for key, threshold in thresholds.items():
-    threshold["analytical_threshold"] = simple_analysis.get_threshold_multiplier(alpha=alpha, at_step = thresholds[key]["periods"])
-    hist_var = btc_usd.prices.pct_change(threshold["periods"]).dropna()
+    threshold["analytical_threshold"] = simple_analysis.get_threshold_multiplier(
+        alpha=config["analysis"]["alpha"], at_step = config["analysis"]["thresholds"]["periods"][key]) * liquidity_adjustment
+    hist_var = ausd_pair.prices.pct_change(config["analysis"]["thresholds"]["periods"][key]).dropna()
     hist_var = hist_var.sort_values("Price", ascending=False)
-    threshold["historical_threshold"] = 1/(1+hist_var.iloc[int(len(hist_var) * alpha),][0])
+    threshold["historical_threshold"] = 1/(1+hist_var.iloc[int(len(hist_var) * config['analysis']['alpha']),][0]) * liquidity_adjustment
     
-    print(f"The {key} threshold based on the analytical VaR for a confidence level of {alpha*100}% of USD/BTC over {threshold['periods']} is: {round(threshold['analytical_threshold'] *100,3)}%")
-    print(f"The {key} threshold based on the historic VaR for a confidence level of {alpha*100}% of USD/BTC over {threshold['periods']} is: {round(threshold['historical_threshold'] *100,3)}% \n")
+    print(f"The {key} threshold based on the analytical VaR for a confidence level of {config['analysis']['alpha']*100}% of aUSD/BTC over {config['analysis']['thresholds']['periods'][key]} days is: {round(threshold['analytical_threshold'] *100,3)}%")
+    print(f"The {key} threshold based on the historic VaR for a confidence level of {config['analysis']['alpha']*100}% of aUSD/BTC over {config['analysis']['thresholds']['periods'][key]} days is: {round(threshold['historical_threshold'] *100,3)}% \n")
+
 # %%
