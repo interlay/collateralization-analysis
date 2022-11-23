@@ -7,7 +7,6 @@ import yaml
 from data.data_request import Token, Token_Pair
 from analysis.analysis import Analysis
 from simulation.simulation import Simulation
-import pandas as pd
 from datetime import datetime, timedelta
 
 with open("../../config.yaml") as f:
