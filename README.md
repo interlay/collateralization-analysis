@@ -4,13 +4,15 @@ This repo containts a package for analyzing collateral as well as the python fil
 
 # Setup
 
-Optional: Install pipenv to create a virtual environment for this project
-Requirement: Have python >3.8 installed. Otherwise install it:
+Optional: Install pipenv to create a virtual environment for this project <br>
+Requirement: Have python >3.8 installed. Otherwise install it using (Ubuntu Linux):
 
 ```
 sudo apt-get update
 sudo apt-get install python3.8
 ```
+
+For other Linux distributions please look at this [guide](https://docs.python-guide.org/starting/install3/linux/).
 
 ```
 pip install --user pipenv
@@ -23,15 +25,15 @@ pipenv install
 pipenv shell
 ```
 
-To run all of the implemented analysis using python:
+To run all of the implemented analysis:
 
 ```
 python main.py
 ```
-this will print the results in stdout and create a more detailed log of the results and parameters used in the `analysis.log` file.
+This will print the results in stdout and create a more detailed `analysis.log` file with the results and parameters used in the simulation.
 
 
-or to run any of the analysis in particular using python
+To run any of the analysis in particular:
 
 ```
 cd results/btc_<col>
@@ -43,24 +45,32 @@ To run any unit tests
 ```
 pytest test_data_request.py
 ```
-
-Or just run any of the notebooks inside your IDE or a web based jupyter environment.
+TODO: Fix the unit tests. The unit tests still fail due to implementation error.
 
 # Implementation
 ## Files
+The individual files can be found under `/results/<token_pair>`.
+
 The `main.py` file can be found in the root directory and run as is.
+Current implementations in `main.py` include:
 
-
-The individual files can be found under `/results/<token_pair>`. The current implementations of the analysis include:
-
+**Polkadot**
 1. aUSD
 2. DOT
-3. KSM
-4. LKSM
-5. stKSM
-6. USDT
+3. USDT
+4. GLMR
+5. LDOT
+6. stDOT
+7. sDOT
+8. ASTR
 
-Each python file contains a detailed description of the anlysis process and can be run as is.
+**Kusama**
+1. KSM
+2. LKSM
+3. stKSM
+4. MOVR
+5. USDT
+
 Note, that the results can vary slightly depending on the date the code is run, since there is no fixed end date set in the code, as well as due to the fact that the estimates are the result of a simulation with an underlying random process.
 
 ## Config
@@ -83,6 +93,8 @@ collateral:
       liquidity_adjustment: # optional: slippage as decimal for the trade of given size
       depeg_adjustment: # optional: e.g. max historic depeg of that asset or comparable asset
 ```
+
+
 
 # Package
 
@@ -127,14 +139,39 @@ sim.simulate(steps=24, maturity=30, n_simulations=10_000)
 
 ## Analysis
 
-This package imports the analysis class, which will use the results of the simulation and conduct analysis upon it.
-TODO: Add example usage.
+This package imports the analysis class, which will use the results of the simulation and conduct analysis upon it. <br>
+### Usage
+
+```
+simple_analysis = Analysis(sim)
+simple_analysis.get_threshold_multiplier(
+            # any confidence level you want to use for estimation
+            alpha=0.99,
+
+            # number of periods (days) within which the threshold should not be breached
+            at_step=7, 
+        )
+    )
+```
 
 # Threshold analysis
+## Interpretation of Results
+Given the parameters of the `config.yaml`, the thresholds can be interpreted in a way that, starting at a thresholds collateral-debt-ratio, this ratio will not drop below 100% (break the peg) within the defined period (e.g. 21 days), with a probability of 'alpha' (e.g. 99%).
 
-An example of an analysis for the token pair BTC/KSM can be found in `results/btc_ksm/btc_ksm_analysis.py`.
-
+## Process
 The analysed parameters are `liquidation_threshold`, `premium_redeem_threshold` and `secure_threshold`. The bridge also uses a `premium_redeem_threshold` to increase system security, but premium redeems are assumed not to occur in order to better capture tail risk.
+
+The analysis applies a value at risk (VaR) approach for a given confidence level and a given duration. The confidence level is the same for all thresholds, only the time frame changes. Given that the ultimate goal is to prevent a depeg event, the analysis assumes a 1:1 peg and scales this ratio by the inverse of the VaR for each threshold. E.g:
+
+```
+Liquidation_Threshold = 1 / (1 - VaR(7days, 99%)) 
+Premium_Redeem_Threshold = 1 / (1 - VaR(14days, 99%))
+Safe_Mint_Threshold = 1 / (1 - VaR(21days, 99%))
+```
+
+Although this does not guarantee that the peg never breaks, it sets a conservative estimate, taking into account the cost of capital for vaults.
+To apply a conservative approach for the VaR estimation, this model choses the higher VaR of the historical and analytical (simulation) approach to account for non-normal distributions.
+
 
 <b>The analysis makes the following assumptions: </b>
 
@@ -155,7 +192,8 @@ If, on any day, vaults fall below the liquidation ratio, their entire collateral
 
 The larger the debt ceiling in the bridge, the more likely it is that liquidiators would move the market. An AMM with the current liquidity capacity shall be used to model the slippage of the trades in the future. For now, we rely on the slippage information of existing pools.
 
-Future improvements:
+
+## Future improvements:
 
 - Model liquidation behaviour for premium redeem.
 - Replace the Gaussian Brownian Motion model with one that considers clustered volatility.
