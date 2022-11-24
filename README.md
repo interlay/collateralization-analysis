@@ -18,6 +18,12 @@ For other Linux distributions please look at this [guide](https://docs.python-gu
 pip install --user pipenv
 ```
 
+Clone the repo and change into its root directory:
+```
+git clone https://github.com/interlay/collateralization-analysis.git && cd collateralization-analysis
+```
+
+
 To install the depencies for this project and enter the virtual environment:
 
 ```
