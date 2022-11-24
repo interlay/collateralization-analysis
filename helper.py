@@ -13,7 +13,7 @@ def round_up_to_nearest_5(num: float) -> int:
     return math.ceil(num / 5) * 5
 
 
-def get_total_risk_adjustment(ticker: str, config: dict()) -> float:
+def get_total_risk_adjustment(ticker: str, network: str, config: dict()) -> float:
     """Reads risk adjustments from config and multiplies all of them to
     return a single 'total risk adjustment' which is used to increase the
     thresholds for risks that are not captured with the simulation.
@@ -30,7 +30,7 @@ def get_total_risk_adjustment(ticker: str, config: dict()) -> float:
     Returns:
         float: A single multiplier used to adjust (increase) the thresholds.
     """
-    token = config["collateral"].get(ticker)
+    token = config["collateral"][network].get(ticker)
     if token.get("risk_adjustment").get("liquidity_adjustment"):
         liquidity_adjustment = token.get("risk_adjustment").get("liquidity_adjustment")
     else:
