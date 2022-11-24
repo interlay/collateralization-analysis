@@ -14,12 +14,11 @@ def get_initial_drawdown(series: pd.Series) -> float:
     Returns:
         float: The highest drawdown from the first data point in the series
     """
-    return (min(series) / series[0] - 1)
+    return min(series) / series[0] - 1
 
 
 class Analysis:
-    """This class implements methods to analyse the results of a given simulation
-    """
+    """This class implements methods to analyse the results of a given simulation"""
 
     def __init__(self, simulation: Simulation):
         self._simulation = simulation
@@ -64,31 +63,30 @@ class Analysis:
         Returns:
             float: Returns the threshold multiplier
         """
-        
+
         at_step = -1 if at_step is None else at_step
-        
+
         if at_step > len(self._simulation.paths[0]):
             raise Exception("Step must be smaller or equal to the length of the path.")
-        
+
         initial_drawdowns = []
-        for _, path in self._simulation.paths.iteritems():
+        for _, path in self._simulation.paths.items():
             initial_drawdowns.append(get_initial_drawdown(path[:at_step]))
 
         # These drawdowns are being represented as negative percentage returns
         # Sorting this in reverse order (descending) mean that the 99th percentile
         # is the 99th percent lowest return
         initial_drawdowns.sort(reverse=True)
-        
+
         # This is the value at risk (VaR) at a given confidence interval (=alpha)
-        # In this case, the VaR is represented as a negative number as it is the 
+        # In this case, the VaR is represented as a negative number as it is the
         # n_th worst 'initial' drawdown of the simulation
         value_at_risk = initial_drawdowns[int(len(initial_drawdowns) * alpha)]
-        
-        # Inverting this then gives us the threshold that 
-        return (1 / (1 + value_at_risk))
 
-    def get_liquidation_threshold(self, TVL: int,
-                                  debt_outstanding: int):
+        # Inverting this then gives us the threshold that
+        return 1 / (1 + value_at_risk)
+
+    def get_liquidation_threshold(self, TVL: int, debt_outstanding: int):
         """Experimental WIP"""
         # It's assumed that the start of the strajectory is the unknown threshold x that has been reached at day 0.
         # From now on, arbitrageurs will buy iBTC and burn it in exchange for collateral.
