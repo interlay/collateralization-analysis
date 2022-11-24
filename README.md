@@ -61,8 +61,7 @@ Current implementations in `main.py` include:
 4. GLMR
 5. LDOT
 6. stDOT
-7. sDOT
-8. ASTR
+7. ASTR
 
 **Kusama**
 1. KSM
@@ -86,15 +85,19 @@ analysis:
       liquidation: 7
       premium_redeem: 14
       safe_mint: 21
+debt:
+  btc: "bitcoin"
+  usd: "dollar"
 collateral:
-  dot: # coingecko ticker of the token to be analyzed
-    name: "polkadot" # coingecko API id of that token
-    risk_adjustment:
-      liquidity_adjustment: # optional: slippage as decimal for the trade of given size
-      depeg_adjustment: # optional: e.g. max historic depeg of that asset or comparable asset
+  polkadot:
+    dot: # coingecko ticker of the token to be analyzed
+      name: "polkadot" # coingecko API id of that token
+      risk_adjustment:
+        liquidity_adjustment: # optional: slippage as decimal for the trade of given size
+        depeg_adjustment: # optional: e.g. max historic depeg of that asset or comparable asset
 ```
 
-
+In `main.py` you can determine the `NETWORK` (Polkadot or Kusama) for which you want to run the analysis as well as the `DEBT`currency (Bitcoin or USD).
 
 # Package
 
