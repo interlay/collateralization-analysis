@@ -13,8 +13,10 @@ with open("config.yaml") as f:
 
 ALPHA = config["analysis"]["alpha"]
 PERIODS = config["analysis"]["thresholds"]["periods"]
+NETWORK = "kusama"
+DEBT = "btc"
 
-btc = Token("bitcoin", "btc")
+debt_token = Token(config["debt"][DEBT], DEBT)
 start_date = (
     datetime.today() - timedelta(config["analysis"]["historical_sample_period"])
 ).strftime("%Y-%m-%d")
@@ -44,7 +46,7 @@ logging.info(
 )
 logging.info("====================================================================")
 
-for ticker, token in config["collateral"].items():
+for ticker, token in config["collateral"][NETWORK].items():
     logging.info(f"Start analysing {ticker}...")
     # BTC is the debt in the system and if BTC increases in price, the over-collateralization ratio drops
     # Vice versa, if the price of TOKEN decreases, the collateralization ratio drops.
@@ -52,13 +54,24 @@ for ticker, token in config["collateral"].items():
     # To model this, we get the TOKEN/BTC price to have TOKEN as base currency (=collateral) and BTC as quote currency (=debt).
     # We then select the n-th worst trajectorie of the price quotation.
 
-    if token.get("proxy"):
-        proxy_ticker, proxy_name = next(iter(token.get("proxy").items()))
-        token_pair = Token_Pair(Token(proxy_name, proxy_ticker), btc)
-    else:
-        token_pair = Token_Pair(Token(token["name"], ticker), btc)
+    token_pair = Token_Pair(Token(token["name"], ticker), debt_token)
     token_pair.get_prices(start_date=start_date)
-    token_pair.calculate_returns()
+    if (
+        token_pair.prices.iloc[0, 0] == 0
+    ):  # temporary until CG fixed returning zeros for stKSM
+        logging.info(f"No prices found for {ticker}/{token_pair.quote_token.ticker}")
+        proxy_ticker, proxy_name = next(iter(token.get("proxy").items()))
+        token_pair = Token_Pair(Token(proxy_name, proxy_ticker), debt_token)
+        logging.info(
+            f"Trying to get prices for {proxy_ticker}/{token_pair.quote_token.ticker} as proxy pair"
+        )
+        token_pair.get_prices(start_date=start_date)
+
+    try:
+        token_pair.calculate_returns()
+    except (KeyError, AttributeError) as e:
+        logging.error(f"Failed to query prices for {ticker} and proxy {proxy_ticker}")
+        pass
 
     # Initialize and run the simulation: Each path represents the price change of the collateral/debt
     # We simulate N trajectories with a duration of T days and daily steps
@@ -74,7 +87,7 @@ for ticker, token in config["collateral"].items():
         mu=0,
     )
 
-    total_risk_adjustment = get_total_risk_adjustment(ticker, config)
+    total_risk_adjustment = get_total_risk_adjustment(ticker, NETWORK, config)
 
     # Initialize the analysis
     simple_analysis = Analysis(sim)
