@@ -1,4 +1,4 @@
-INFO:root:Date of the analysis: 2022-11-22 16:55:48.011658
+INFO:root:Date of the analysis: 2022-11-24 12:05:23.036974
 INFO:root:====================================================================
 INFO:root:Start running the collateral analysis with the following parameters:
 INFO:root:
@@ -11,63 +11,79 @@ INFO:root:
         Liquidations:           21
     
 INFO:root:====================================================================
-INFO:root:Start analysing dot...
-DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
-DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/polkadot/market_chart?vs_currency=btc&days=365 HTTP/1.1" 200 None
-DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of dot/BTC over 7 days is: 122.513%
-DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of dot/BTC over 7 days is: 123.393%
-INFO:root:The suggested liquidation threshold is 125%
-DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of dot/BTC over 14 days is: 137.377%
-DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of dot/BTC over 14 days is: 132.418%
-INFO:root:The suggested premium_redeem threshold is 140%
-DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of dot/BTC over 21 days is: 148.556%
-DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of dot/BTC over 21 days is: 130.913%
-INFO:root:The suggested safe_mint threshold is 150%
 INFO:root:Start analysing ksm...
 DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
 DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/kusama/market_chart?vs_currency=btc&days=365 HTTP/1.1" 200 None
-DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of ksm/BTC over 7 days is: 126.53%
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of ksm/BTC over 7 days is: 126.364%
 DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of ksm/BTC over 7 days is: 134.412%
 INFO:root:The suggested liquidation threshold is 135%
-DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of ksm/BTC over 14 days is: 143.3%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of ksm/BTC over 14 days is: 143.381%
 DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of ksm/BTC over 14 days is: 149.103%
 INFO:root:The suggested premium_redeem threshold is 150%
-DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of ksm/BTC over 21 days is: 159.888%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of ksm/BTC over 21 days is: 158.388%
 DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of ksm/BTC over 21 days is: 164.829%
 INFO:root:The suggested safe_mint threshold is 165%
 INFO:root:Start analysing stksm...
 DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/lido-on-kusama/market_chart?vs_currency=btc&days=365 HTTP/1.1" 200 None
+INFO:root:No prices found for stksm/btc
+INFO:root:Trying to get prices for ksm/btc as proxy pair
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
 DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/kusama/market_chart?vs_currency=btc&days=365 HTTP/1.1" 200 None
-DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of stksm/BTC over 7 days is: 146.19%
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of stksm/BTC over 7 days is: 146.018%
 DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of stksm/BTC over 7 days is: 155.408%
 INFO:root:The suggested liquidation threshold is 160%
-DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of stksm/BTC over 14 days is: 167.044%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of stksm/BTC over 14 days is: 166.108%
 DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of stksm/BTC over 14 days is: 172.393%
 INFO:root:The suggested premium_redeem threshold is 175%
-DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of stksm/BTC over 21 days is: 183.554%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of stksm/BTC over 21 days is: 184.576%
 DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of stksm/BTC over 21 days is: 190.576%
 INFO:root:The suggested safe_mint threshold is 195%
 INFO:root:Start analysing lksm...
 DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
 DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/liquid-ksm/market_chart?vs_currency=btc&days=365 HTTP/1.1" 200 None
-DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of lksm/BTC over 7 days is: 138.38%
-DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of lksm/BTC over 7 days is: 135.744%
-INFO:root:The suggested liquidation threshold is 140%
-DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of lksm/BTC over 14 days is: 157.017%
-DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of lksm/BTC over 14 days is: 140.745%
-INFO:root:The suggested premium_redeem threshold is 160%
-DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of lksm/BTC over 21 days is: 171.376%
-DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of lksm/BTC over 21 days is: 146.957%
-INFO:root:The suggested safe_mint threshold is 175%
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of lksm/BTC over 7 days is: 141.527%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of lksm/BTC over 7 days is: 139.03%
+INFO:root:The suggested liquidation threshold is 145%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of lksm/BTC over 14 days is: 160.48%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of lksm/BTC over 14 days is: 144.152%
+INFO:root:The suggested premium_redeem threshold is 165%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of lksm/BTC over 21 days is: 175.707%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of lksm/BTC over 21 days is: 150.515%
+INFO:root:The suggested safe_mint threshold is 180%
 INFO:root:Start analysing ausd...
 DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
 DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/acala-dollar/market_chart?vs_currency=btc&days=365 HTTP/1.1" 200 None
 DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of ausd/BTC over 7 days is: -0.003%
-DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of ausd/BTC over 7 days is: 1085444.374%
-INFO:root:The suggested liquidation threshold is 1085445%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of ausd/BTC over 7 days is: 1206049.304%
+INFO:root:The suggested liquidation threshold is 1206050%
 DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of ausd/BTC over 14 days is: -0.0%
-DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of ausd/BTC over 14 days is: 1104185.176%
-INFO:root:The suggested premium_redeem threshold is 1104190%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of ausd/BTC over 14 days is: 1226872.418%
+INFO:root:The suggested premium_redeem threshold is 1226875%
 DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of ausd/BTC over 21 days is: -0.0%
-DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of ausd/BTC over 21 days is: 1110755.241%
-INFO:root:The suggested safe_mint threshold is 1110760%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of ausd/BTC over 21 days is: 1234172.49%
+INFO:root:The suggested safe_mint threshold is 1234175%
+INFO:root:Start analysing usdt...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/tether/market_chart?vs_currency=btc&days=365 HTTP/1.1" 200 None
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of usdt/BTC over 7 days is: 139.663%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of usdt/BTC over 7 days is: 135.479%
+INFO:root:The suggested liquidation threshold is 140%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of usdt/BTC over 14 days is: 152.146%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of usdt/BTC over 14 days is: 138.293%
+INFO:root:The suggested premium_redeem threshold is 155%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of usdt/BTC over 21 days is: 161.937%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of usdt/BTC over 21 days is: 140.43%
+INFO:root:The suggested safe_mint threshold is 165%
+INFO:root:Start analysing movr...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/moonriver/market_chart?vs_currency=btc&days=365 HTTP/1.1" 200 None
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of movr/BTC over 7 days is: 155.177%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of movr/BTC over 7 days is: 168.233%
+INFO:root:The suggested liquidation threshold is 170%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of movr/BTC over 14 days is: 184.241%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of movr/BTC over 14 days is: 201.315%
+INFO:root:The suggested premium_redeem threshold is 205%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of movr/BTC over 21 days is: 214.933%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of movr/BTC over 21 days is: 223.227%
+INFO:root:The suggested safe_mint threshold is 225%
