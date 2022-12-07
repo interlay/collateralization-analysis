@@ -70,11 +70,14 @@ Current implementations in `main.py` include:
 7. ASTR
 
 **Kusama**
-1. KSM
-2. LKSM
-3. stKSM
-4. MOVR
-5. USDT
+1. kBTC
+2. KSM
+3. LKSM
+4. stKSM
+5. sKSM
+6. MOVR
+7. USDT
+8. aUSD
 
 Note, that the results can vary slightly depending on the date the code is run, since there is no fixed end date set in the code, as well as due to the fact that the estimates are the result of a simulation with an underlying random process.
 
@@ -92,8 +95,8 @@ analysis:
       premium_redeem: 14
       safe_mint: 21
 debt:
-  btc: "bitcoin"
-  usd: "dollar"
+  btc: "bitcoin" # BTC is used for estimations for the bridge
+  usd: "dollar" # USD is used for the lending protocol since most tokens will be collateralized or borrowed against USD
 collateral:
   polkadot:
     dot: # coingecko ticker of the token to be analyzed
@@ -178,9 +181,10 @@ Premium_Redeem_Threshold = 1 / (1 - VaR(14days, 99%))
 Safe_Mint_Threshold = 1 / (1 - VaR(21days, 99%))
 ```
 
+All thresholds are then adjusted for the liquidity risk and depeg risk (event risk). The liquidity risk adjustment takes into account the slippage that would occure, if the total supply (=supply_cap, locked as collateral) would have to be liquidated in a single transaction and swaped against another token in the most liquid pool available. The depeg risk adjust the threshold for the most severe depeg of the tokens history. If no depeg occured so far, a comparable depeg of a proxy token is used instead. This is done because such event risk cannot be captured adequately by the standard deviation or might not have occured within the sample period. 
+
 Although this does not guarantee that the peg never breaks, it sets a conservative estimate, taking into account the cost of capital for vaults.
 To apply a conservative approach for the VaR estimation, this model choses the higher VaR of the historical and analytical (simulation) approach to account for non-normal distributions.
-
 
 <b>The analysis makes the following assumptions: </b>
 
