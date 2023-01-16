@@ -1,6 +1,6 @@
 analysis:
   alpha: 0.99
-  n_simulations: 20_000
+  n_simulations: 100_000
   historical_sample_period: 365
   thresholds:
     periods:
@@ -21,9 +21,9 @@ collateral:
     usdt:
       name: "tether"
       risk_adjustment:
-        liquidity_adjustment: 
+        liquidity_adjustment: 0.002
         depeg_adjustment: 0.08
-      supply_cap:
+      supply_cap: 200_000
     ausd: 
       name: "acala-dollar-acala"
       risk_adjustment:
@@ -48,6 +48,8 @@ collateral:
         liquidity_adjustment: 
         depeg_adjustment:
       supply_cap:
+      proxy:
+        dot: "polkadot"
     sdot: 
       name: "staked-dot"
       risk_adjustment:
@@ -63,6 +65,14 @@ collateral:
         depeg_adjustment:
       supply_cap:
   kusama:
+    kbtc:
+      name: "kintsugi-btc"
+      proxy:
+        btc: "bitcoin"
+      risk_adjustment:
+        liquidity_adjustment: 0.05
+        depeg_adjustment: 0
+      supply_cap: 20
     ksm: 
       name: "kusama"
       risk_adjustment:
@@ -85,6 +95,15 @@ collateral:
         liquidity_adjustment: 0.06
         depeg_adjustment: 0.063
       supply_cap: 55_000
+    sksm: # coingecko price feed is blocking implementation
+      name: "staked-ksm"
+      proxy:
+        ksm: "kusama"
+      risk_adjustment: 
+        liquidity_adjustment: 0.1
+        depeg_adjustment: 
+      supply_cap: 300
+    ausd:
     ausd:
       name: "acala-dollar"
       proxy:
@@ -106,4 +125,6 @@ collateral:
       risk_adjustment:
         liquidity_adjustment: 0.118
       supply_cap: 20_000
+
+
 
