@@ -11,10 +11,12 @@ import sys
 with open("config.yaml") as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
 
+NETWORK = "polkadot"  # select between kusama and polkadot
+DEBT = "btc"  # select usd for lending market and btc for vaults
+
+
 ALPHA = config["analysis"]["alpha"]
 PERIODS = config["analysis"]["thresholds"]["periods"]
-NETWORK = "kusama"
-DEBT = "btc"
 
 debt_token = Token(config["debt"][DEBT], DEBT)
 start_date = (
@@ -26,15 +28,13 @@ logging.basicConfig(filename="analysis.log", level=logging.DEBUG)
 consoleHandler = logging.StreamHandler(sys.stdout)
 consoleHandler.setLevel(logging.INFO)
 logger.addHandler(consoleHandler)
-# fileHandler = logging.FileHandler("analysis.log")
-# fileHandler.setLevel(logging.DEBUG)
-# logger.addHandler(fileHandler)
 
 logging.info(f"Date of the analysis: {datetime.today()}")
 logging.info("====================================================================")
 logging.info("Start running the collateral analysis with the following parameters:")
 logging.info(
     f"""
+    Debt currency:              {DEBT}
     Confidence level (alpha):   {ALPHA*100}%
     Number of path simulations: {config["analysis"]["n_simulations"]}
     Historical sample period:   {config["analysis"]["historical_sample_period"]}

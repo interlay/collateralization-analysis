@@ -1,13 +1,16 @@
 import requests
 from datetime import datetime
 import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)
 
 urls = {
     "coingecko": "https://api.coingecko.com/api/v3/coins/",
 }
 
 
-class Token():
+class Token:
     """Class that represents a token"""
 
     def __init__(self, name: str, ticker: str):
@@ -30,16 +33,16 @@ class Token():
 
 
 # TODO: Add a default token argument that sets the quote currency to USD if nothing else is specified.
-class Token_Pair():
+class Token_Pair:
     """Class representating a trading pair of two tokens."""
 
     def __init__(self, base_token: Token, quote_token: Token) -> None:
         """Initializing the token pair.
 
         Args:
-            base_token (Token): A token that represent the base token of the trading pair. 
+            base_token (Token): A token that represent the base token of the trading pair.
                 This can be seen as '1 unit of base token is worth x units of quote token'
-            quote_token (Token): A second token that represents the quote token of the pair. 
+            quote_token (Token): A second token that represents the quote token of the pair.
                 This can be seen as 'x unit of quote token is worth 1 unit of base token'
         """
         self._base_token = base_token
@@ -74,8 +77,14 @@ class Token_Pair():
 
     # Functions
     # TODO: If inverse = True, it should also switch base and quote token if it gets executed for the first time to correctly represent the price in terms of base and quote currency.
-    def get_prices(self, data_source: str = "coingecko", start_date: str = None, end_date: str = None, inverse: bool = False) -> None:
-        """Requests the prices from 'source' 
+    def get_prices(
+        self,
+        data_source: str = "coingecko",
+        start_date: str = None,
+        end_date: str = None,
+        inverse: bool = False,
+    ) -> None:
+        """Requests the prices from 'source'
 
         Args:
             data_source (str, optional): Source to get the data from. Defaults to "coingecko".
@@ -92,38 +101,44 @@ class Token_Pair():
             self.prices = 1 / prices
 
     def calculate_returns(self, type: str = "geometric", period: str = "daily") -> None:
-        shift_periods = {
-            "daily": 1,
-            "weekly": 7,
-            "monthly": 31,
-            "annualy": 365
-        }
+        shift_periods = {"daily": 1, "weekly": 7, "monthly": 31, "annualy": 365}
         shift_period = shift_periods[period]
 
         if type == "geometric":
             self.returns = self.prices.pct_change(
-                periods=shift_period, fill_method="bfill").dropna()
+                periods=shift_period, fill_method="bfill"
+            ).dropna()
 
-    def calculate_mean_return(self, type: str = "geometric",
-                              standardization_period: str = "annualy") -> float:
+    def calculate_mean_return(
+        self, type: str = "geometric", standardization_period: str = "annualy"
+    ) -> float:
         standardization_periods = {
             "daily": 1,
             "weekly": 7,
             "monthly": 31,
-            "annualy": 365
+            "annualy": 365,
         }
         if type == "geometric":
             return (self.prices.iloc[-1, 0] / self.prices.iloc[0, 0]) ** (
-                standardization_periods[standardization_period] / len(self.prices)) - 1
+                standardization_periods[standardization_period] / len(self.prices)
+            ) - 1
 
         if type == "arithmetic":
             self.calculate_returns()
-            return (self.returns.mean()[0] * standardization_periods[standardization_period])
+            return (
+                self.returns.mean()[0] * standardization_periods[standardization_period]
+            )
 
 
-#TODO: Implement coingecko API
-class Data_Request():
-    def __init__(self, token_pair: Token_Pair, data_source: str = "coingecko", start_date: str = None, end_date: str = None):
+# TODO: Implement coingecko API
+class Data_Request:
+    def __init__(
+        self,
+        token_pair: Token_Pair,
+        data_source: str = "coingecko",
+        start_date: str = None,
+        end_date: str = None,
+    ):
         """
         :Token_Pair: An instance of class Token_Pair with the two tokens for which the data should be requested
         :data_source: Source from where the data should be requested
@@ -134,14 +149,17 @@ class Data_Request():
         self._token_pair = token_pair
         self._data_source = data_source
         self._start_date = start_date
-        self._end_date = end_date if end_date is not None else datetime.today().strftime("%Y-%m-%d")
+        self._end_date = (
+            end_date if end_date is not None else datetime.today().strftime("%Y-%m-%d")
+        )
 
     def get_length_in_days(self) -> str:
         if self._start_date is None:
             return str(365)
 
-        time_delta = datetime.strptime(
-            self._end_date, "%Y-%m-%d") - datetime.strptime(self._start_date, "%Y-%m-%d")
+        time_delta = datetime.strptime(self._end_date, "%Y-%m-%d") - datetime.strptime(
+            self._start_date, "%Y-%m-%d"
+        )
         return str(time_delta.days)
 
     def parse_url(self):
@@ -152,13 +170,25 @@ class Data_Request():
         if self._data_source == "coingecko":
             base_token = self._token_pair.base_token.name
             quote_token = self._token_pair.quote_token.ticker
-            self._url_endpoint = urls[self._data_source] + base_token + \
-                "/market_chart?vs_currency=" + quote_token + "&days=" + length_in_days
+            self._url_endpoint = (
+                urls[self._data_source]
+                + base_token
+                + "/market_chart?vs_currency="
+                + quote_token
+                + "&days="
+                + length_in_days
+            )
 
     def request_historic_prices(self):
         self.parse_url()
-        price_data = requests.get(self._url_endpoint).json()["prices"]
-        price_data = pd.DataFrame(price_data, columns=["Date", "Price"])
-        price_data.set_index("Date", inplace=True)
-        price_data.index = pd.to_datetime(price_data.index, unit="ms")
+        try:
+            price_data = requests.get(self._url_endpoint).json()["prices"]
+            price_data = pd.DataFrame(price_data, columns=["Date", "Price"])
+            price_data.set_index("Date", inplace=True)
+            price_data.index = pd.to_datetime(price_data.index, unit="ms")
+        except KeyError as e:
+            logging.info(f"{e}: could not get price data...")
+            price_data = pd.DataFrame(
+                [(0, 0)], columns=["Date", "Price"]
+            )  # to align with CG returning zeros for stKSM and is handled in main.py accordignly
         return price_data
