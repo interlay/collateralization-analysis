@@ -187,7 +187,7 @@ class Data_Request:
             price_data.set_index("Date", inplace=True)
             price_data.index = pd.to_datetime(price_data.index, unit="ms")
         except KeyError as e:
-            logging.info(f"{e}: could not get price data...")
+            logging.info(f"Error {e}: could not get price data...")
             price_data = pd.DataFrame(
                 [(0, 0)], columns=["Date", "Price"]
             )  # to align with CG returning zeros for stKSM and is handled in main.py accordignly
