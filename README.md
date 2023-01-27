@@ -78,6 +78,7 @@ Current implementations in `main.py` include:
 6. MOVR
 7. USDT
 8. aUSD
+9. vKSM
 
 Note, that the results can vary slightly depending on the date the code is run, since there is no fixed end date set in the code, as well as due to the fact that the estimates are the result of a simulation with an underlying random process.
 
@@ -169,6 +170,9 @@ simple_analysis.get_threshold_multiplier(
 # Threshold analysis
 ## Interpretation of Results
 Given the parameters of the `config.yaml`, the thresholds can be interpreted in a way that, starting at a thresholds collateral-debt-ratio, this ratio will not drop below 100% (break the peg) within the defined period (e.g. 21 days), with a probability of 'alpha' (e.g. 99%).
+
+If the analysis is supposed to be used for the lending market, the inverse of the reported thresholds needs to be taken (and rounded) to arrive at the loan-to-value ratio. In the lending protocol the threshold for the premium redeem serves as the maximum borrowing threshold, since there is no premium redeem.
+
 
 ## Process
 The analysed parameters are `liquidation_threshold`, `premium_redeem_threshold` and `secure_threshold`. The bridge also uses a `premium_redeem_threshold` to increase system security, but premium redeems are assumed not to occur in order to better capture tail risk.
