@@ -54,12 +54,33 @@ for ticker, token in config["collateral"][NETWORK].items():
     # To model this, we get the TOKEN/BTC price to have TOKEN as base currency (=collateral) and BTC as quote currency (=debt).
     # We then select the n-th worst trajectorie of the price quotation.
 
+    # If debt currency is the same as the token to be analysed, switch debt token.
+
+    if ticker in ["usdt", "kbtc"]:
+        debt_token = Token(
+            "bitcoin" if ticker == "usdt" else "dollar",
+            "btc" if ticker == "usdt" else "usd",
+        )
+    else:
+        debt_token = Token(config["debt"][DEBT], DEBT)
+
     token_pair = Token_Pair(Token(token["name"], ticker), debt_token)
     token_pair.get_prices(start_date=start_date)
-    if (
-        token_pair.prices.iloc[0, 0] == 0
-    ):  # temporary until CG fixed returning zeros for stKSM
-        logging.info(f"No prices found for {ticker}/{token_pair.quote_token.ticker}")
+
+    # if (
+    #     token_pair.prices.iloc[0, 0] == 0
+    # ):  # temporary until CG fixed returning zeros for stKSM
+    #     logging.info(f"No prices found for {ticker}/{token_pair.quote_token.ticker}")
+    #     proxy_ticker, proxy_name = next(iter(token.get("proxy").items()))
+    #     token_pair = Token_Pair(Token(proxy_name, proxy_ticker), debt_token)
+
+    if (token_pair.prices.iloc[0, 0] == 0) or (
+        token_pair.prices.index[0] - timedelta(1)
+        > datetime.strptime(start_date, "%Y-%m-%d")
+    ):
+        logging.info(
+            f"No sufficient historic prices for {ticker}/{token_pair.quote_token.ticker}"
+        )
         proxy_ticker, proxy_name = next(iter(token.get("proxy").items()))
         token_pair = Token_Pair(Token(proxy_name, proxy_ticker), debt_token)
         logging.info(
@@ -131,9 +152,9 @@ for ticker, token in config["collateral"][NETWORK].items():
         )
 
         logging.debug(
-            f"The {key} threshold based on the analytical VaR for a confidence level of {ALPHA*100}% of {ticker}/BTC over {PERIODS[key]} days is: {round(threshold['analytical_threshold'] *100,3)}%"
+            f"The {key} threshold based on the analytical VaR for a confidence level of {ALPHA*100}% of {ticker}/{token_pair.quote_token.ticker} over {PERIODS[key]} days is: {round(threshold['analytical_threshold'] *100,3)}%"
         )
         logging.debug(
-            f"The {key} threshold based on the historic VaR for a confidence level of {ALPHA*100}% of {ticker}/BTC over {PERIODS[key]} days is: {round(threshold['historical_threshold'] *100,3)}%"
+            f"The {key} threshold based on the historic VaR for a confidence level of {ALPHA*100}% of {ticker}/{token_pair.quote_token.ticker} over {PERIODS[key]} days is: {round(threshold['historical_threshold'] *100,3)}%"
         )
         logging.info(f"The suggested {key} threshold is {rounded_threshold}%")
