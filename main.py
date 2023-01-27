@@ -67,13 +67,7 @@ for ticker, token in config["collateral"][NETWORK].items():
     token_pair = Token_Pair(Token(token["name"], ticker), debt_token)
     token_pair.get_prices(start_date=start_date)
 
-    # if (
-    #     token_pair.prices.iloc[0, 0] == 0
-    # ):  # temporary until CG fixed returning zeros for stKSM
-    #     logging.info(f"No prices found for {ticker}/{token_pair.quote_token.ticker}")
-    #     proxy_ticker, proxy_name = next(iter(token.get("proxy").items()))
-    #     token_pair = Token_Pair(Token(proxy_name, proxy_ticker), debt_token)
-
+    # check if historic prices are available for the full sample period
     if (token_pair.prices.iloc[0, 0] == 0) or (
         token_pair.prices.index[0] - timedelta(1)
         > datetime.strptime(start_date, "%Y-%m-%d")
@@ -81,6 +75,8 @@ for ticker, token in config["collateral"][NETWORK].items():
         logging.info(
             f"No sufficient historic prices for {ticker}/{token_pair.quote_token.ticker}"
         )
+
+        # if not, use proxy to query prices
         proxy_ticker, proxy_name = next(iter(token.get("proxy").items()))
         token_pair = Token_Pair(Token(proxy_name, proxy_ticker), debt_token)
         logging.info(
