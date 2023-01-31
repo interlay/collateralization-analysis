@@ -4,7 +4,7 @@ from data.data_request import Token, Token_Pair
 from analysis.analysis import Analysis
 from simulation.simulation import Simulation
 from datetime import datetime, timedelta
-from helper import round_up_to_nearest_5, get_total_risk_adjustment
+from helper import round_up_to_nearest_5, get_total_risk_adjustment, print_banner
 import logging
 import sys
 
@@ -28,6 +28,8 @@ logging.basicConfig(filename="analysis.log", level=logging.DEBUG)
 consoleHandler = logging.StreamHandler(sys.stdout)
 consoleHandler.setLevel(logging.INFO)
 logger.addHandler(consoleHandler)
+
+print_banner()
 
 logging.info(f"Date of the analysis: {datetime.today()}")
 logging.info("====================================================================")

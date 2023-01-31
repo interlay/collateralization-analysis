@@ -50,3 +50,8 @@ def get_total_risk_adjustment(ticker: str, network: str, config: dict()) -> floa
     )  # adjustment for depegging event
 
     return liquidity_adjustment_multiplier * depeg_adjustment_multiplier
+
+
+def print_banner() -> None:
+    with open("banner.txt", "r") as f:
+        print(f.read())
