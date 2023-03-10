@@ -219,3 +219,155 @@ INFO:root:The suggested premium_redeem threshold is 215%
 DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of movr/usd over 21 days is: 224.381%
 DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of movr/usd over 21 days is: 258.616%
 INFO:root:The suggested safe_mint threshold is 260%
+INFO:root:Date of the analysis: 2023-03-07 12:07:44.044040
+INFO:root:====================================================================
+INFO:root:Start running the collateral analysis with the following parameters:
+INFO:root:
+    Debt currency:              usd
+    Confidence level (alpha):   99.0%
+    Number of path simulations: 100000
+    Historical sample period:   365
+    Threshold period in days:
+        Safe Mint:              7
+        Premium Redeem:         14
+        Liquidations:           21
+    
+INFO:root:====================================================================
+INFO:root:Start analysing kbtc...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/kintsugi-btc/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+INFO:root:No sufficient historic prices for kbtc/usd
+INFO:root:Trying to get prices for btc/usd as proxy pair
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+INFO:root:Date of the analysis: 2023-03-07 12:21:44.906940
+INFO:root:====================================================================
+INFO:root:Start running the collateral analysis with the following parameters:
+INFO:root:
+    Debt currency:              usd
+    Confidence level (alpha):   99.0%
+    Number of path simulations: 100000
+    Historical sample period:   365
+    Threshold period in days:
+        Safe Mint:              7
+        Premium Redeem:         14
+        Liquidations:           21
+    
+INFO:root:====================================================================
+INFO:root:Start analysing kbtc...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/kintsugi-btc/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+INFO:root:No sufficient historic prices for kbtc/usd
+INFO:root:Trying to get prices for btc/usd as proxy pair
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+INFO:root:Date of the analysis: 2023-03-07 12:26:45.741524
+INFO:root:====================================================================
+INFO:root:Start running the collateral analysis with the following parameters:
+INFO:root:
+    Debt currency:              usd
+    Confidence level (alpha):   99.0%
+    Number of path simulations: 100000
+    Historical sample period:   365
+    Threshold period in days:
+        Safe Mint:              7
+        Premium Redeem:         14
+        Liquidations:           21
+    
+INFO:root:====================================================================
+INFO:root:Start analysing kbtc...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/kintsugi-btc/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+INFO:root:No sufficient historic prices for kbtc/usd
+INFO:root:Trying to get prices for btc/usd as proxy pair
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+DEBUG:matplotlib.pyplot:Loaded backend tkagg version unknown.
+INFO:root:Date of the analysis: 2023-03-07 12:29:08.068785
+INFO:root:====================================================================
+INFO:root:Start running the collateral analysis with the following parameters:
+INFO:root:
+    Debt currency:              usd
+    Confidence level (alpha):   99.0%
+    Number of path simulations: 100000
+    Historical sample period:   365
+    Threshold period in days:
+        Safe Mint:              7
+        Premium Redeem:         14
+        Liquidations:           21
+    
+INFO:root:====================================================================
+INFO:root:Start analysing kbtc...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/kintsugi-btc/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+INFO:root:No sufficient historic prices for kbtc/usd
+INFO:root:Trying to get prices for btc/usd as proxy pair
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+DEBUG:matplotlib.pyplot:Loaded backend tkagg version 8.6.
+INFO:root:Date of the analysis: 2023-03-07 12:33:20.034519
+INFO:root:====================================================================
+INFO:root:Start running the collateral analysis with the following parameters:
+INFO:root:
+    Debt currency:              usd
+    Confidence level (alpha):   99.0%
+    Number of path simulations: 100000
+    Historical sample period:   365
+    Threshold period in days:
+        Safe Mint:              7
+        Premium Redeem:         14
+        Liquidations:           21
+    
+INFO:root:====================================================================
+INFO:root:Start analysing kbtc...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/kintsugi-btc/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+INFO:root:No sufficient historic prices for kbtc/usd
+INFO:root:Trying to get prices for btc/usd as proxy pair
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of kbtc/usd over 7 days is: 142.057%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of kbtc/usd over 7 days is: 147.949%
+INFO:root:The suggested liquidation threshold is 150%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of kbtc/usd over 14 days is: 152.326%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of kbtc/usd over 14 days is: 158.983%
+INFO:root:The suggested premium_redeem threshold is 160%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of kbtc/usd over 21 days is: 156.534%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of kbtc/usd over 21 days is: 161.591%
+INFO:root:The suggested safe_mint threshold is 165%
+INFO:root:Start analysing ksm...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/kusama/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+INFO:root:Date of the analysis: 2023-03-07 12:34:11.597914
+INFO:root:====================================================================
+INFO:root:Start running the collateral analysis with the following parameters:
+INFO:root:
+    Debt currency:              usd
+    Confidence level (alpha):   99.0%
+    Number of path simulations: 100000
+    Historical sample period:   365
+    Threshold period in days:
+        Safe Mint:              7
+        Premium Redeem:         14
+        Liquidations:           21
+    
+INFO:root:====================================================================
+INFO:root:Start analysing kbtc...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/kintsugi-btc/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+INFO:root:No sufficient historic prices for kbtc/usd
+INFO:root:Trying to get prices for btc/usd as proxy pair
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of kbtc/usd over 7 days is: 126.915%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of kbtc/usd over 7 days is: 147.949%
+INFO:root:The suggested liquidation threshold is 150%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of kbtc/usd over 14 days is: 139.565%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of kbtc/usd over 14 days is: 158.983%
+INFO:root:The suggested premium_redeem threshold is 160%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of kbtc/usd over 21 days is: 149.688%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of kbtc/usd over 21 days is: 161.591%
+INFO:root:The suggested safe_mint threshold is 165%
+INFO:root:Start analysing ksm...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/kusama/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None

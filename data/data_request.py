@@ -75,6 +75,9 @@ class Token_Pair:
     def returns(self, returns: pd.DataFrame) -> None:
         self._returns = returns
 
+    def pair_ticker(self) -> str:
+        return "/".join([self.base_token.ticker, self.quote_token.ticker])
+
     # Functions
     # TODO: If inverse = True, it should also switch base and quote token if it gets executed for the first time to correctly represent the price in terms of base and quote currency.
     def get_prices(
@@ -108,6 +111,9 @@ class Token_Pair:
             self.returns = self.prices.pct_change(
                 periods=shift_period, fill_method="bfill"
             ).dropna()
+            self.returns = self.returns.rename(
+                columns={f"{self.pair_ticker()} Price": f"{self.pair_ticker()} Return"}
+            )
 
     def calculate_mean_return(
         self, type: str = "geometric", standardization_period: str = "annualy"
@@ -128,6 +134,20 @@ class Token_Pair:
             return (
                 self.returns.mean()[0] * standardization_periods[standardization_period]
             )
+
+
+class Portfolio:
+    def __init__(self, weights: list[float], assets: list[Token_Pair]) -> None:
+        self.weights = weights
+        self.assets = assets
+
+    def calculate_cov(self):
+        returns = pd.DataFrame()
+        for asset in self.assets:
+            try:
+                returns = returns.join(asset.returns, how="outer")
+            except Exception as e:
+                print(e, f"Returns of {asset.pair_ticker} could not be joined")
 
 
 # TODO: Implement coingecko API
@@ -183,12 +203,15 @@ class Data_Request:
         self.parse_url()
         try:
             price_data = requests.get(self._url_endpoint).json()["prices"]
-            price_data = pd.DataFrame(price_data, columns=["Date", "Price"])
+            price_data = pd.DataFrame(
+                price_data, columns=["Date", f"{self._token_pair.pair_ticker()} Price"]
+            )
             price_data.set_index("Date", inplace=True)
             price_data.index = pd.to_datetime(price_data.index, unit="ms")
+
         except KeyError as e:
             logging.info(f"Error {e}: could not get price data...")
             price_data = pd.DataFrame(
                 [(0, 0)], columns=["Date", "Price"]
             )  # to align with CG returning zeros for stKSM and is handled in main.py accordignly
-        return price_data
+        return price_data[:-1]  # drops last datapoint which is intra-day

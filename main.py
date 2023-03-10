@@ -96,7 +96,7 @@ for ticker, token in config["collateral"][NETWORK].items():
     # We simulate N trajectories with a duration of T days and daily steps
     # and assume a normal distribution (GBM) with the std of the pair over the past sample
     # period and a mean of 0.
-    sim = Simulation(token_pair, strategy="GBM")
+    sim = Simulation(token_pair, strategy="GMB")
     sim.simulate(
         steps=1,
         maturity=PERIODS["safe_mint"],
