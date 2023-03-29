@@ -39,13 +39,6 @@ python main.py
 This will print the results in stdout and create a more detailed `analysis.log` file with the results and parameters used in the simulation.
 
 
-To run any of the analysis in particular:
-
-```
-cd results/btc_<col>
-python <analysis_file.py>
-```
-
 To run any unit tests
 
 ```
@@ -55,30 +48,23 @@ TODO: Fix the unit tests. The unit tests still fail due to implementation error.
 
 # Implementation
 ## Files
-The individual files can be found under `/results/<token_pair>`.
-
 The `main.py` file can be found in the root directory and run as is.
 Current implementations in `main.py` include:
 
 **Polkadot**
-1. aUSD
-2. DOT
-3. USDT
-4. GLMR
-5. LDOT
-6. stDOT
-7. ASTR
+1. DOT
+2. USDT
+3. GLMR
+4. LDOT
+5. ASTR
 
 **Kusama**
 1. kBTC
 2. KSM
 3. LKSM
-4. stKSM
-5. sKSM
-6. MOVR
-7. USDT
-8. aUSD
-9. vKSM
+4. MOVR
+5. USDT
+6. vKSM
 
 Note, that the results can vary slightly depending on the date the code is run, since there is no fixed end date set in the code, as well as due to the fact that the estimates are the result of a simulation with an underlying random process.
 
