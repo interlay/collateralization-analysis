@@ -24,12 +24,6 @@ collateral:
         liquidity_adjustment: 0.002
         depeg_adjustment: 0.08
       supply_cap: 200_000
-    # ausd: 
-    #   name: "acala-dollar-acala"
-    #   risk_adjustment:
-    #     liquidity_adjustment: 
-    #     depeg_adjustment: 0.99
-    #   supply_cap:
     glmr: 
       name: "moonbeam"
       risk_adjustment:
@@ -42,22 +36,6 @@ collateral:
         liquidity_adjustment: 0.02
         depeg_adjustment:
       supply_cap: 200_000
-    stdot: 
-      name: "lido-staked-polkadot"
-      risk_adjustment:
-        liquidity_adjustment: 
-        depeg_adjustment:
-      supply_cap:
-      proxy:
-        dot: "polkadot"
-    sdot: 
-      name: "staked-dot"
-      risk_adjustment:
-        liquidity_adjustment: 
-        depeg_adjustment:
-      proxy:
-        dot: "polkadot"
-      supply_cap:
     astr: 
       name: "astar"
       risk_adjustment:
@@ -79,14 +57,6 @@ collateral:
         liquidity_adjustment: 
         depeg_adjustment:
       supply_cap: 100_000
-    stksm:
-      name:  "lido-on-kusama"
-      proxy:
-        ksm: "kusama"
-      risk_adjustment:
-        liquidity_adjustment: 0.07
-        depeg_adjustment: 0.07 # depeg of lido ETH
-      supply_cap: 5_000
     lksm: 
       name: "liquid-ksm"
       proxy:
@@ -103,23 +73,6 @@ collateral:
         liquidity_adjustment: 0.083
         depeg_adjustment: 0.07 # depeg of lido ETH
       supply_cap: 2_000
-    sksm: # coingecko price feed is blocking implementation
-      name: "staked-ksm"
-      proxy:
-        ksm: "kusama"
-      risk_adjustment: 
-        liquidity_adjustment: 0.065
-        depeg_adjustment: 0.07 # depeg of lido ETH
-      supply_cap: 200
-    # ausd:
-    # ausd:
-    #   name: "acala-dollar"
-    #   proxy:
-    #     usd: "dollar"
-    #   risk_adjustment:
-    #     liquidity_adjustment: 
-    #     depeg_adjustment: 0.991
-    #   supply_cap: 0
     usdt:
       name: "tether"
       proxy:
