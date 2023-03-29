@@ -4,7 +4,7 @@ from data.data_request import Token, Token_Pair
 from analysis.analysis import Analysis
 from simulation.simulation import Simulation
 from datetime import datetime, timedelta
-from helper import round_up_to_nearest_5, get_total_risk_adjustment, print_banner
+from helper.helper import round_up_to_nearest_5, get_total_risk_adjustment, print_banner
 import logging
 import sys
 
