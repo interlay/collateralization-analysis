@@ -24,12 +24,12 @@ collateral:
         liquidity_adjustment: 0.002
         depeg_adjustment: 0.08
       supply_cap: 200_000
-    ausd: 
-      name: "acala-dollar-acala"
-      risk_adjustment:
-        liquidity_adjustment: 
-        depeg_adjustment: 0.99
-      supply_cap:
+    # ausd: 
+    #   name: "acala-dollar-acala"
+    #   risk_adjustment:
+    #     liquidity_adjustment: 
+    #     depeg_adjustment: 0.99
+    #   supply_cap:
     glmr: 
       name: "moonbeam"
       risk_adjustment:
