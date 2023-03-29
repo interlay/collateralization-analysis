@@ -39,9 +39,9 @@ collateral:
     ldot: 
       name: "liquid-staking-dot"
       risk_adjustment:
-        liquidity_adjustment: 
+        liquidity_adjustment: 0.02
         depeg_adjustment:
-      supply_cap:
+      supply_cap: 200_000
     stdot: 
       name: "lido-staked-polkadot"
       risk_adjustment:
@@ -100,9 +100,9 @@ collateral:
       proxy:
         ksm: "kusama"
       risk_adjustment: 
-        liquidity_adjustment: 0.04
+        liquidity_adjustment: 0.083
         depeg_adjustment: 0.07 # depeg of lido ETH
-      supply_cap: 500
+      supply_cap: 2_000
     sksm: # coingecko price feed is blocking implementation
       name: "staked-ksm"
       proxy:
