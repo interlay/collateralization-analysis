@@ -126,7 +126,7 @@ pair.calculate_returns()
 ## Simulation
 
 This part contains a class that instantiates a random number generator based on a given random process, passed as parameters to the constructor.
-The number generator, in conjunction with the random process, generates 'n' (=20,000) random paths for the given token pair.
+The number generator, in conjunction with the random process, generates 'n' (=100,000) random paths for the given token pair.
 The maturity parameter determines the length of the path, while the steps determine the intervall per period (e.g. 30 periods \* 24 steps). In this example, this will generate paths consisting of 30 days, each containing 24 steps representing the hours per day. The standard behaviour, if no parameters are passed for mean and sigma is to estimate those values based on the given sample. Since our sample consists of daily data, this is consistent. If the maturity would represent years and the steps days, we would need to adjust the mean and sigma accordingly.
 
 ### Usage:
