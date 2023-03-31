@@ -1,49 +1,60 @@
 #%%
-import yaml
-from data.data_request import Token, Token_Pair
-from analysis.analysis import Analysis
-from simulation.simulation import Simulation
-from datetime import datetime, timedelta
-from helper import round_up_to_nearest_5, get_total_risk_adjustment, print_banner
-import logging
-import sys
-import pandas as pd
-import numpy as np
+from chopsticks.state_queries import Kintsugi
+from substrateinterface import Keypair, SubstrateInterface
+from substrateinterface.exceptions import SubstrateRequestException
 
-with open("config.yaml") as f:
-    config = yaml.load(f, Loader=yaml.FullLoader)
+kintsugi = SubstrateInterface(url="ws://localhost:8000")
 
-ALPHA = config["analysis"]["alpha"]
-PERIODS = config["analysis"]["thresholds"]["periods"]
-
-start_date = (
-    datetime.today() - timedelta(config["analysis"]["historical_sample_period"])
-).strftime("%Y-%m-%d")
-
-tokens = [
-    Token("bitcoin", "BTC"),
-    Token("ethereum", "ETH"),
-    Token("kusama", "KSM"),
-    Token("kintsugi", "KINT"),
-    Token("liquid-ksm", "LKSM"),
-    Token("moonriver", "MOVR"),
-]
 # %%
-assets = []
-for token in tokens:
-    token_pair = Token_Pair(token, Token("dollar", "USD"))
-    token_pair.get_prices(start_date=start_date)
-    token_pair.calculate_returns()
-    assets.append(token_pair)
-# %%
-returns = pd.DataFrame()
-for asset in assets:
-    if len(asset.prices) > 1:
-        returns = returns.join(asset.returns, how="outer")
-        returns.rename(columns={"Price": asset.pair_ticker()}, inplace=True)
+for k, v in kintsugi.vault_thresholds.items():
+    print(k)
+    for collateral, threshold in v:
+        print(f"{collateral} is: {threshold.value/1e16}%")
 #%%
-weights = np.array([1, 0, 0, 0, ,0 0])
-std = (weights.dot(returns.cov().values).dot(weights.transpose()) * 365) ** 0.5
+oracles = kintsugi.get_authorized_oracles()
+for k, v in oracles:
+    print(k, v)
+# %%
+keypair = Keypair.create_from_uri("//Alice")
+call = kintsugi.compose_call(
+    call_module="Oracle",
+    call_function="remove_authorized_oracle",
+    call_params={"account_id": "14ysUis7oxFQ3JHemZ8pnaBbQfm4SXt5E21J1xT6nx3A5ysB"},
+)
+# %%
+batched_call = kintsugi.compose_call(
+    call_module="Utility", call_function="batch", call_params={"calls": [call]}
+)
 
-print(f"Annualized volatility of the portfolio would be {std * 100}%")
+sudo_call = kintsugi.compose_call("Sudo", "sudo", {"call": batched_call})
+
+# %%
+extrinsic = kintsugi.create_signed_extrinsic(call=sudo_call, keypair=keypair)
+# %%
+try:
+    receipt = kintsugi.submit_extrinsic(extrinsic, wait_for_inclusion=True)
+
+    print(
+        'Extrinsic "{}" included in block "{}"'.format(
+            receipt.extrinsic_hash, receipt.block_hash
+        )
+    )
+
+    if receipt.is_success:
+
+        print("✅ Success, triggered events:")
+        for event in receipt.triggered_events:
+            print(f"* {event.value}")
+
+    else:
+        print("⚠️ Extrinsic Failed: ", receipt.error_message)
+
+
+except SubstrateRequestException as e:
+    print("Failed to send: {}".format(e))
+
+# %%
+oracles = kintsugi.query_map(module="Oracle", storage_function="AuthorizedOracles")
+for k, v in oracles:
+    print(k, v)
 # %%
