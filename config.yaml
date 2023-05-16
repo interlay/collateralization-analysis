@@ -12,30 +12,49 @@ debt:
   usd: "dollar"
 collateral:
   polkadot:
+    ibtc:
+      name: "interlay-btc"
+      proxy:
+        btc: "bitcoin"
+      risk_adjustment:
+        liquidity_adjustment: 0.05
+        depeg_adjustment: 0
+      supply_cap: 30
     dot: 
       name: "polkadot"
       risk_adjustment:
-        liquidity_adjustment: 
-        depeg_adjustment: 
-      supply_cap:
+        liquidity_adjustment: 0
+        depeg_adjustment: 0
+      supply_cap: 980_000
     usdt:
       name: "tether"
       risk_adjustment:
-        liquidity_adjustment: 0.002
+        liquidity_adjustment: 0
         depeg_adjustment: 0.08
-      supply_cap: 200_000
+      supply_cap: 1_000_000
     glmr: 
       name: "moonbeam"
       risk_adjustment:
         liquidity_adjustment: 
         depeg_adjustment:
-      supply_cap:
+      supply_cap: 0
     ldot: 
       name: "liquid-staking-dot"
+      proxy: 
+        dot: "polkadot"
       risk_adjustment:
-        liquidity_adjustment: 0.02
-        depeg_adjustment:
+        liquidity_adjustment: 0.05
+        depeg_adjustment: 0.07
       supply_cap: 200_000
+    vdot:
+      name: "voucher-dot"
+      proxy:
+        dot: "polkadot"
+      risk_adjustment:
+        liquidity_adjustment: 0.092
+        depeg_adjustment: 0.07
+      supply_cap: 2_000
+
     astr: 
       name: "astar"
       risk_adjustment:

@@ -11,7 +11,7 @@ import sys
 with open("config.yaml") as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
 
-NETWORK = "kusama"  # select between kusama and polkadot
+NETWORK = "polkadot"  # select between kusama and polkadot
 DEBT = "btc"  # select usd for lending market and btc for vaults
 
 
