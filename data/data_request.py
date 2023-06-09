@@ -2,6 +2,7 @@ import requests
 from datetime import datetime
 import pandas as pd
 import logging
+from enum import Enum
 
 logger = logging.getLogger(__name__)
 
@@ -10,10 +11,32 @@ urls = {
 }
 
 
+class ToBaseDecimals(Enum):
+    DOLLAR = (0,)
+    BITCOIN = (8,)
+    POLKADOT = (10,)
+    KUSAMA = (12,)
+    KINTSUGI = (12,)
+    PERCENTAGE = (18,)
+    PLANK = (18,)
+
+    def get_decimals(self):
+        return self.value[0]
+
+
+class Thresholds(Enum):
+    SECURE = "SecureCollateralThreshold"
+    PREMIUM = "PremiumRedeemThreshold"
+    LIQUIDATION = "LiquidationCollateralThreshold"
+
+    def get_threshold(self):
+        return self.value
+
+
 class Token:
     """Class that represents a token"""
 
-    def __init__(self, name: str, ticker: str):
+    def __init__(self, name: str, ticker: str, decimals: Enum = None):
         """Initializing the token object.
 
         Args:
@@ -22,6 +45,7 @@ class Token:
         """
         self._ticker = ticker
         self._name = name
+        self._decimals = decimals
 
     @property
     def name(self) -> str:
@@ -30,6 +54,54 @@ class Token:
     @property
     def ticker(self) -> str:
         return self._ticker
+
+    @property
+    def decimals(self) -> int:
+        if self._decimals is None:
+            raise NotImplementedError("No decimal attribute was set a initialization.")
+        else:
+            return self._decimals
+
+
+class BTC(Token):
+    def __init__(self) -> None:
+        super().__init__(
+            name="bitcoin", ticker="BTC", decimals=ToBaseDecimals.BITCOIN.get_decimals()
+        )
+
+
+class DOT(Token):
+    def __init__(self) -> None:
+        super().__init__(
+            name="polkadot",
+            ticker="DOT",
+            decimals=ToBaseDecimals.POLKADOT.get_decimals(),
+        )
+
+
+class KSM(Token):
+    def __init__(self) -> None:
+        super().__init__(
+            name="kusama",
+            ticker="KSM",
+            decimals=ToBaseDecimals.KUSAMA.get_decimals(),
+        )
+
+
+class KINT(Token):
+    def __init__(self) -> None:
+        super().__init__(
+            name="kintsugi",
+            ticker="KINT",
+            decimals=ToBaseDecimals.KINTSUGI.get_decimals(),
+        )
+
+
+class USD(Token):
+    def __init__(self) -> None:
+        super().__init__(
+            name="dollar", ticker="USD", decimals=ToBaseDecimals.DOLLAR.get_decimals()
+        )
 
 
 # TODO: Add a default token argument that sets the quote currency to USD if nothing else is specified.
@@ -134,6 +206,16 @@ class Token_Pair:
             return (
                 self.returns.mean()[0] * standardization_periods[standardization_period]
             )
+
+
+class Bitcoin_Dollar(Token_Pair):
+    def __init__(self) -> None:
+        super().__init__(Bitcoin(), Dollar())
+
+
+class Polkadot_Dollar(Token_Pair):
+    def __init__(self) -> None:
+        super().__init__(Polkadot(), Dollar())
 
 
 class Portfolio:
