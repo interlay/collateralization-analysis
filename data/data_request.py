@@ -3,34 +3,13 @@ from datetime import datetime
 import pandas as pd
 import logging
 from enum import Enum
+from constants import ToBaseDecimals
 
 logger = logging.getLogger(__name__)
 
 urls = {
     "coingecko": "https://api.coingecko.com/api/v3/coins/",
 }
-
-
-class ToBaseDecimals(Enum):
-    DOLLAR = (0,)
-    BITCOIN = (8,)
-    POLKADOT = (10,)
-    KUSAMA = (12,)
-    KINTSUGI = (12,)
-    PERCENTAGE = (18,)
-    PLANK = (18,)
-
-    def get_decimals(self):
-        return self.value[0]
-
-
-class Thresholds(Enum):
-    SECURE = "SecureCollateralThreshold"
-    PREMIUM = "PremiumRedeemThreshold"
-    LIQUIDATION = "LiquidationCollateralThreshold"
-
-    def get_threshold(self):
-        return self.value
 
 
 class Token:
