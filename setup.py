@@ -44,10 +44,6 @@ ksm_usd = Token_Pair(ksm, kint)
 ksm_usd.get_prices()
 current_ksm_price = ksm_usd.prices.iloc[-1, 0]
 
-# %%
-current_ksm_price = 26.0
-current_btc_price = 26000.0
-
 kintsugi.update_collateral_ratios(ksm, current_ksm_price, current_btc_price)
 
 # %%

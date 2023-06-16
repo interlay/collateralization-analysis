@@ -1,12 +1,16 @@
 # %%
 import yaml
-from data.data_request import Token, Token_Pair
+import logging
+import sys
+
+from constants import ToBaseDecimals
+from chopsticks.state_queries import ChainGeneral
+from chopsticks.dex import ChainDEX
+from data.data_request import Token, Token_Pair, KSM, KINT, BTC, USD
 from analysis.analysis import Analysis
 from simulation.simulation import Simulation
 from datetime import datetime, timedelta
 from helper import round_up_to_nearest_5, get_total_risk_adjustment, print_banner
-import logging
-import sys
 
 with open("config.yaml") as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
@@ -66,7 +70,8 @@ for ticker, token in config["collateral"][NETWORK].items():
     else:
         debt_token = Token(config["debt"][DEBT], DEBT)
 
-    token_pair = Token_Pair(Token(token["name"], ticker), debt_token)
+    collateral_token = Token(token["name"], ticker)
+    token_pair = Token_Pair(collateral_token, debt_token)
     token_pair.get_prices(start_date=start_date)
 
     # check if historic prices are available for the full sample period
@@ -95,18 +100,19 @@ for ticker, token in config["collateral"][NETWORK].items():
     # Initialize and run the simulation: Each path represents the price change of the collateral/debt
     # We simulate N trajectories with a duration of T days and daily steps
     # and assume a normal distribution (GBM) with the std of the pair over the past sample
-    # period and a mean of 0.
-    sim = Simulation(token_pair, strategy="GMB")
+    # period and a mean of set to the negative of the risk adjustment value.
+
+    total_risk_adjustment = get_total_risk_adjustment(ticker, NETWORK, config)
+
+    sim = Simulation(token_pair, strategy="GBM")
     sim.simulate(
         steps=1,
-        maturity=PERIODS["safe_mint"],
-        n_simulations=config["analysis"]["n_simulations"],
+        maturity=365,
+        n_simulations=1000,
         initial_value=1,
         sigma=token_pair.returns.std()[0],
         mu=0,
     )
-
-    total_risk_adjustment = get_total_risk_adjustment(ticker, NETWORK, config)
 
     # Initialize the analysis
     simple_analysis = Analysis(sim)
@@ -156,3 +162,39 @@ for ticker, token in config["collateral"][NETWORK].items():
             f"The {key} threshold based on the historic VaR for a confidence level of {ALPHA*100}% of {ticker}/{token_pair.quote_token.ticker} over {PERIODS[key]} days is: {round(threshold['historical_threshold'] *100,3)}%"
         )
         logging.info(f"The suggested {key} threshold is {rounded_threshold}%")
+
+        #################################################################################################
+        #                                                                                               #
+        #                                   confirm the results are okay                                #
+        #                                                                                               #
+        #################################################################################################
+
+        # query parameters from chain
+        chain_query = ChainGeneral()
+        chain_query.get_thresholds()
+        chain_query.get_total_stake()
+        chain_query.get_registered_vaults()
+
+        kint, ksm, usd, btc = KINT(), KSM(), USD(), BTC()
+
+        btc_usd = Token_Pair(btc, usd)
+        btc_usd.get_prices()
+        current_btc_price = btc_usd.prices.iloc[-1, 0]
+
+        ksm_usd = Token_Pair(ksm, usd)
+        ksm_usd.get_prices()
+        current_ksm_price = ksm_usd.prices.iloc[-1, 0]
+
+        # update collateral ratios with current prices
+        chain_query.update_collateral_ratios(ksm, current_ksm_price, current_btc_price)
+
+        # fund the account that does the liquidations
+        ACCOUNT_FUNDING = {
+            ksm: 100_000 * 10 ** ToBaseDecimals.KUSAMA.get_decimals(),
+            kint: 100_000 * 10 ** ToBaseDecimals.KINTSUGI.get_decimals(),
+        }
+
+        chain_query.fund_account(ACCOUNT_FUNDING)
+
+        for path in sim.paths:
+            path.cumprod()
