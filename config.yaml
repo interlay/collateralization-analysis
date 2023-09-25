@@ -21,8 +21,14 @@ collateral:
     usdt:
       name: "tether"
       risk_adjustment:
-        liquidity_adjustment: 0.002
+        liquidity_adjustment:
         depeg_adjustment: 0.08
+      supply_cap: 200_000
+    usdc:
+      name: "usd-coin"
+      risk_adjustment:
+        liquidity_adjustment:
+        depeg_adjustment: 0.13
       supply_cap: 200_000
     glmr: 
       name: "moonbeam"
@@ -30,18 +36,14 @@ collateral:
         liquidity_adjustment: 
         depeg_adjustment:
       supply_cap:
-    ldot: 
-      name: "liquid-staking-dot"
+    vdot: 
+      name: "voucher-dot"
+      proxy:
+        dot: "polkadot"
       risk_adjustment:
         liquidity_adjustment: 0.02
         depeg_adjustment:
-      supply_cap: 200_000
-    astr: 
-      name: "astar"
-      risk_adjustment:
-        liquidity_adjustment: 
-        depeg_adjustment:
-      supply_cap:
+      supply_cap: 500_000
   kusama:
     kbtc:
       name: "kintsugi-btc"
@@ -57,14 +59,6 @@ collateral:
         liquidity_adjustment: 
         depeg_adjustment:
       supply_cap: 100_000
-    lksm: 
-      name: "liquid-ksm"
-      proxy:
-        ksm: "kusama"
-      risk_adjustment: 
-        liquidity_adjustment: 0.06
-        depeg_adjustment: 0.07 # depeg of lido ETH
-      supply_cap: 55_000
     vksm: 
       name: "bifrost-ksm"
       proxy:
