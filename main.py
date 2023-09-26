@@ -49,24 +49,24 @@ logging.info(
 logging.info("====================================================================")
 
 for ticker, token in config["collateral"][NETWORK].items():
-    logging.info(f"Start analysing {ticker}...")
     # BTC is the debt in the system and if BTC increases in price, the over-collateralization ratio drops
     # Vice versa, if the price of TOKEN decreases, the collateralization ratio drops.
     #
     # To model this, we get the TOKEN/BTC price to have TOKEN as base currency (=collateral) and BTC as quote currency (=debt).
     # We then select the n-th worst trajectorie of the price quotation.
 
-    # If debt currency is the same as the token to be analysed, switch debt token.
-
-    if ticker in ["usdt", "kbtc"]:
-        debt_token = Token(
-            "bitcoin" if ticker == "usdt" else "dollar",
-            "btc" if ticker == "usdt" else "usd",
+    # If the debt token (e.g. iBTC) is the same as the collateral (e.g. iBTC)
+    # Skip this pair.
+    col_token = Token(token["name"], ticker)
+    if col_token.ticker == debt_token.ticker:
+        logging.info(
+            f"""Skipping analysis of token pair {col_token.ticker}/{debt_token.ticker}
+            because the tokens are the same"""
         )
-    else:
-        debt_token = Token(config["debt"][DEBT], DEBT)
+        continue
 
-    token_pair = Token_Pair(Token(token["name"], ticker), debt_token)
+    logging.info(f"Start analysing {ticker}...")
+    token_pair = Token_Pair(col_token, debt_token)
     token_pair.get_prices(start_date=start_date)
 
     # check if historic prices are available for the full sample period
@@ -80,6 +80,14 @@ for ticker, token in config["collateral"][NETWORK].items():
 
         # if not, use proxy to query prices
         proxy_ticker, proxy_name = next(iter(token.get("proxy").items()))
+
+        if proxy_ticker == debt_token.ticker:
+            logging.info(
+                f"""Skipping analysis of token pair {col_token.ticker}/{debt_token.ticker}
+            because the tokens are the same"""
+            )
+            continue
+
         token_pair = Token_Pair(Token(proxy_name, proxy_ticker), debt_token)
         logging.info(
             f"Trying to get prices for {proxy_ticker}/{token_pair.quote_token.ticker} as proxy pair"
@@ -127,7 +135,7 @@ for ticker, token in config["collateral"][NETWORK].items():
                 alpha=ALPHA,
                 at_step=PERIODS[key],
             )
-            * total_risk_adjustment
+            / total_risk_adjustment
         )
 
         # create a rolling window of returns for the given window size(=PERIODS[key])
@@ -138,7 +146,7 @@ for ticker, token in config["collateral"][NETWORK].items():
             + hist_var.iloc[
                 int(len(hist_var) * ALPHA),
             ][0]
-        ) * total_risk_adjustment
+        ) / total_risk_adjustment
 
     # Quick and dirty, this computes the increments between the thresholds!
     # VaR (and hence thresholds) scale by the square root of time, so
