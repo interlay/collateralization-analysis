@@ -52,19 +52,18 @@ The `main.py` file can be found in the root directory and run as is.
 Current implementations in `main.py` include:
 
 **Polkadot**
-1. DOT
-2. USDT
-3. GLMR
-4. LDOT
-5. ASTR
+1.iBTC
+2. DOT
+3. USDT
+4. GLMR
+5. vDOT
+6. USDC
 
 **Kusama**
 1. kBTC
 2. KSM
-3. LKSM
-4. MOVR
-5. USDT
-6. vKSM
+3. vKSM
+4. USDT
 
 Note, that the results can vary slightly depending on the date the code is run, since there is no fixed end date set in the code, as well as due to the fact that the estimates are the result of a simulation with an underlying random process.
 
@@ -163,13 +162,8 @@ If the analysis is supposed to be used for the lending market, the inverse of th
 ## Process
 The analysed parameters are `liquidation_threshold`, `premium_redeem_threshold` and `secure_threshold`. The bridge also uses a `premium_redeem_threshold` to increase system security, but premium redeems are assumed not to occur in order to better capture tail risk.
 
-The analysis applies a value at risk (VaR) approach for a given confidence level and a given duration. The confidence level is the same for all thresholds, only the time frame changes. Given that the ultimate goal is to prevent a depeg event, the analysis assumes a 1:1 peg and scales this ratio by the inverse of the VaR for each threshold. E.g:
-
-```
-Liquidation_Threshold = 1 / (1 - VaR(7days, 99%)) 
-Premium_Redeem_Threshold = 1 / (1 - VaR(14days, 99%))
-Safe_Mint_Threshold = 1 / (1 - VaR(21days, 99%))
-```
+The analysis applies a value at risk (VaR) approach for a given confidence level and a given duration. The confidence level is the same for all thresholds, only the time frame changes. Given that the ultimate goal is to prevent a depeg event, the analysis assumes a 1:1 peg and scales this ratio by the inverse of the VaR for each threshold. Because VaR scales by the square root of time, the largest "jump" in the thresholds will be from the 1:1 peg to the liquidation threshold. These increments will become smaller and thus put more risk on the vault operators against whom users are more likely to make a premium redeem.
+To shift risk away from the vaults, the process has been changed by basically rearranging these increments in reverse order. This does not change likelihood of the peg being broken but reduces the risks of premium redeems for vaults. 
 
 All thresholds are then adjusted for the liquidity risk and depeg risk (event risk). The liquidity risk adjustment takes into account the slippage that would occure, if the total supply (=supply_cap, locked as collateral) would have to be liquidated in a single transaction and swaped against another token in the most liquid pool available. The depeg risk adjust the threshold for the most severe depeg of the tokens history. If no depeg occured so far, a comparable depeg of a proxy token is used instead. This is done because such event risk cannot be captured adequately by the standard deviation or might not have occured within the sample period. 
 
