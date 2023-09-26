@@ -4,9 +4,9 @@ analysis:
   historical_sample_period: 365
   thresholds:
     periods:
-      liquidation: 7
+      liquidation: 21
       premium_redeem: 14
-      safe_mint: 21
+      safe_mint: 7
 debt:
   btc: "bitcoin"
   usd: "dollar"

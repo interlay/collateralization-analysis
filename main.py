@@ -11,7 +11,7 @@ import sys
 with open("config.yaml") as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
 
-NETWORK = "kusama"  # select between kusama and polkadot
+NETWORK = "polkadot"  # select between kusama and polkadot
 DEBT = "btc"  # select usd for lending market and btc for vaults
 
 
@@ -99,7 +99,7 @@ for ticker, token in config["collateral"][NETWORK].items():
     sim = Simulation(token_pair, strategy="GBM")
     sim.simulate(
         steps=1,
-        maturity=PERIODS["safe_mint"],
+        maturity=PERIODS["liquidation"],
         n_simulations=config["analysis"]["n_simulations"],
         initial_value=1,
         sigma=token_pair.returns.std()[0],
@@ -111,48 +111,73 @@ for ticker, token in config["collateral"][NETWORK].items():
     # Initialize the analysis
     simple_analysis = Analysis(sim)
 
-    thresholds = {
-        "liquidation": {"analytical_threshold": None, "historical_threshold": None},
-        "premium_redeem": {"analytical_threshold": None, "historical_threshold": None},
-        "safe_mint": {"analytical_threshold": None, "historical_threshold": None},
+    # This one is only used to store the Var to later compute the increments
+    var = {
+        "liquidation": {"analytical": None, "historical": None},
+        "premium_redeem": {"analytical": None, "historical": None},
+        "safe_mint": {"analytical": None, "historical": None},
     }
 
-    # Get the threshold for each period using the historical and analytical
+    # Get the VaR for each period using the historical and analytical
     # method.
-    for key, threshold in thresholds.items():
-        threshold["analytical_threshold"] = (
-            simple_analysis.get_threshold_multiplier(
+    for key, value in var.items():
+        value["analytical"] = (
+            1
+            / simple_analysis.get_threshold_multiplier(
                 alpha=ALPHA,
                 at_step=PERIODS[key],
             )
             * total_risk_adjustment
         )
+
+        # create a rolling window of returns for the given window size(=PERIODS[key])
         hist_var = token_pair.prices.pct_change(PERIODS[key]).dropna()
         hist_var = hist_var.sort_values("Price", ascending=False)
-        threshold["historical_threshold"] = (
+        value["historical"] = (
             1
-            / (
-                1
-                + hist_var.iloc[
-                    int(len(hist_var) * ALPHA),
-                ][0]
-            )
-            * total_risk_adjustment
-        )
+            + hist_var.iloc[
+                int(len(hist_var) * ALPHA),
+            ][0]
+        ) * total_risk_adjustment
 
-        # Use the max of both to be conservative and round UP to 5%.
+    # Quick and dirty, this computes the increments between the thresholds!
+    # VaR (and hence thresholds) scale by the square root of time, so
+    # 0-7 days VaR will be a larger increment than 7-14 days etc.
+    # We want large increments between Safe_mint and premium_redeem
+    # and need less safety margin between premium_redeem and liquidation.
+    var_lists = {"analytical": [], "historical": []}
+    increments = {"analytical": [], "historical": []}
+    thresholds = {
+        "liquidation": {"analytical": None, "historical": None},
+        "premium_redeem": {"analytical": None, "historical": None},
+        "safe_mint": {"analytical": None, "historical": None},
+    }
+
+    for method in var_lists.keys():
+        for key in var.keys():
+            var_lists[method].append(var[key][method])
+    var_lists["analytical"].append(1)
+    var_lists["historical"].append(1)
+
+    for k in var_lists.keys():
+        for i in range(len(var_lists[k]) - 1):
+            increments[k].append(var_lists[k][i + 1] - var_lists[k][i])
+
+    for i, key in enumerate(thresholds.keys()):
+        thresholds[key]["analytical"] = 1 / (1 - sum(increments["analytical"][: i + 1]))
+        thresholds[key]["historical"] = 1 / (1 - sum(increments["historical"][: i + 1]))
+
+    for key, value in thresholds.items():
         rounded_threshold = round_up_to_nearest_5(
-            max(
-                threshold["historical_threshold"],
-                threshold["analytical_threshold"],
-            )
-            * 100
+            max(thresholds[key]["analytical"], thresholds[key]["historical"]) * 100
         )
 
         logging.debug(
-            f"The {key} threshold based on the analytical VaR for a confidence level of {ALPHA*100}% of {ticker}/{token_pair.quote_token.ticker} over {PERIODS[key]} days is: {round(threshold['analytical_threshold'] *100,3)}%"
+            f"The {key} threshold based on the analytical VaR for a confidence level of {ALPHA*100}% of {ticker}/{token_pair.quote_token.ticker} over {PERIODS[key]} days is: {round(thresholds[key]['analytical'] *100,3)}%"
         )
         logging.debug(
-            f"The {key} threshold based on the historic VaR for a confidence level of {ALPHA*100}% of {ticker}/{token_pair.quote_token.ticker} over {PERIODS[key]} days is: {round(threshold['historical_threshold'] *100,3)}%"
+            f"The {key} threshold based on the historic VaR for a confidence level of {ALPHA*100}% of {ticker}/{token_pair.quote_token.ticker} over {PERIODS[key]} days is: {round(thresholds[key]['historical'] *100,3)}%"
         )
         logging.info(f"The suggested {key} threshold is {rounded_threshold}%")
+
+# %%
