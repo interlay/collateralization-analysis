@@ -52,7 +52,7 @@ class Analysis:
             for _, path in self._simulation.paths.iteritems():
                 subPlots.plot(path)
 
-    def get_threshold_multiplier(self, alpha: float, at_step: int = None) -> float:
+    def get_simulated_var(self, alpha: float, at_step: int = None) -> float:
         """Estimates the premium multiplier for the threshold by getting the initial maxmimum drawdown of the i-th interval corrosponding to the given alpha.
         Example: alpha=0.99 means that the functions selects the maximum drawdown that corrosponds to the 99th-percentile/interval.
 
@@ -81,10 +81,7 @@ class Analysis:
         # This is the value at risk (VaR) at a given confidence interval (=alpha)
         # In this case, the VaR is represented as a negative number as it is the
         # n_th worst 'initial' drawdown of the simulation
-        value_at_risk = initial_drawdowns[int(len(initial_drawdowns) * alpha)]
-
-        # Inverting this then gives us the threshold that
-        return 1 / (1 + value_at_risk)
+        return initial_drawdowns[int(len(initial_drawdowns) * alpha)]
 
     def get_liquidation_threshold(self, TVL: int, debt_outstanding: int):
         """Experimental WIP"""

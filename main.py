@@ -129,24 +129,45 @@ for ticker, token in config["collateral"][NETWORK].items():
     # Get the VaR for each period using the historical and analytical
     # method.
     for key, value in var.items():
-        value["analytical"] = (
-            1
-            / simple_analysis.get_threshold_multiplier(
-                alpha=ALPHA,
-                at_step=PERIODS[key],
-            )
-            / total_risk_adjustment
+        partial_analytical_var = simple_analysis.get_simulated_var(
+            alpha=ALPHA,
+            at_step=PERIODS[key],
+        )
+
+        value["analytical"] = (1 + partial_analytical_var) / total_risk_adjustment
+
+        logging.debug(
+            f"Total risk adjustment for {col_token.ticker} used to compute the {key} threshold is: {total_risk_adjustment}"
+        )
+
+        logging.debug(
+            f"Partial analytical VaR (before risk adjustment) for {col_token.ticker} is: {partial_analytical_var}"
+        )
+
+        logging.debug(
+            f"The analytical VaR (after risk adjustment) for {col_token.ticker} is: {value['analytical']}"
         )
 
         # create a rolling window of returns for the given window size(=PERIODS[key])
         hist_var = token_pair.prices.pct_change(PERIODS[key]).dropna()
         hist_var = hist_var.sort_values("Price", ascending=False)
-        value["historical"] = (
-            1
-            + hist_var.iloc[
-                int(len(hist_var) * ALPHA),
-            ][0]
-        ) / total_risk_adjustment
+        partial_historical_var = hist_var.iloc[
+            int(len(hist_var) * ALPHA),
+        ][0]
+
+        value["historical"] = (1 + partial_historical_var) / total_risk_adjustment
+
+        logging.debug(
+            f"Total risk adjustment for {col_token.ticker} used to compute the {key} threshold is: {total_risk_adjustment}"
+        )
+
+        logging.debug(
+            f"Partial historical VaR (before risk adjustment) for {col_token.ticker} is: {partial_historical_var}"
+        )
+
+        logging.debug(
+            f"The historical VaR (after risk adjustment) for {col_token.ticker} is: {value['historical']}"
+        )
 
     # Quick and dirty, this computes the increments between the thresholds!
     # VaR (and hence thresholds) scale by the square root of time, so
@@ -172,6 +193,14 @@ for ticker, token in config["collateral"][NETWORK].items():
             increments[k].append(var_lists[k][i + 1] - var_lists[k][i])
 
     for i, key in enumerate(thresholds.keys()):
+
+        logging.debug(
+            f"The summed increments for the analytical {key} threshold are: {sum(increments['analytical'][: i + 1])}"
+        )
+        logging.debug(
+            f"The summed increments for the historical {key} threshold are: {sum(increments['historical'][: i + 1])}"
+        )
+
         thresholds[key]["analytical"] = 1 / (1 - sum(increments["analytical"][: i + 1]))
         thresholds[key]["historical"] = 1 / (1 - sum(increments["historical"][: i + 1]))
 
