@@ -77,9 +77,9 @@ analysis:
   historical_sample_period: 365 #sample period in days from which standard deviation is estimated
   thresholds:
     periods: # length for each threshold simulation in days
-      liquidation: 7
+      liquidation: 21
       premium_redeem: 14
-      safe_mint: 21
+      safe_mint: 7
 debt:
   btc: "bitcoin" # BTC is used for estimations for the bridge
   usd: "dollar" # USD is used for the lending protocol since most tokens will be collateralized or borrowed against USD
