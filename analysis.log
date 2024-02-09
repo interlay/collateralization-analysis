@@ -581,3 +581,447 @@ INFO:root:The suggested premium_redeem threshold is 115%
 DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of vdot/btc over 7 days is: 132.366%
 DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of vdot/btc over 7 days is: 126.187%
 INFO:root:The suggested safe_mint threshold is 135%
+INFO:root:Date of the analysis: 2024-02-09 14:42:34.083331
+INFO:root:====================================================================
+INFO:root:Start running the collateral analysis with the following parameters:
+INFO:root:
+    Debt currency:              btc
+    Confidence level (alpha):   99.0%
+    Number of path simulations: 100000
+    Historical sample period:   365
+    Threshold period in days:
+        Safe Mint:              21
+        Premium Redeem:         14
+        Liquidations:           7
+    
+INFO:root:====================================================================
+INFO:root:Start analysing ibtc...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/interlay-btc/market_chart?vs_currency=btc&days=365 HTTP/1.1" 404 None
+INFO:root:Error 'prices': could not get price data...
+INFO:root:No sufficient historic prices for ibtc/btc
+INFO:root:Skipping analysis of token pair ibtc/btc
+            because the tokens are the same
+INFO:root:Start analysing dot...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/polkadot/market_chart?vs_currency=btc&days=365 HTTP/1.1" 200 None
+DEBUG:root:Total risk adjustment for dot used to compute the liquidation threshold is: 1.0
+DEBUG:root:Partial analytical VaR (before risk adjustment) for dot is: -0.262245934905305
+DEBUG:root:The analytical VaR (after risk adjustment) for dot is: 0.737754065094695
+DEBUG:root:Total risk adjustment for dot used to compute the liquidation threshold is: 1.0
+DEBUG:root:Partial historical VaR (before risk adjustment) for dot is: -0.19069812795456975
+DEBUG:root:The historical VaR (after risk adjustment) for dot is: 0.8093018720454302
+DEBUG:root:Total risk adjustment for dot used to compute the premium_redeem threshold is: 1.0
+DEBUG:root:Partial analytical VaR (before risk adjustment) for dot is: -0.21230440083812663
+DEBUG:root:The analytical VaR (after risk adjustment) for dot is: 0.7876955991618734
+DEBUG:root:Total risk adjustment for dot used to compute the premium_redeem threshold is: 1.0
+DEBUG:root:Partial historical VaR (before risk adjustment) for dot is: -0.20301700880827223
+DEBUG:root:The historical VaR (after risk adjustment) for dot is: 0.7969829911917278
+DEBUG:root:Total risk adjustment for dot used to compute the safe_mint threshold is: 1.0
+DEBUG:root:Partial analytical VaR (before risk adjustment) for dot is: -0.14365530172774932
+DEBUG:root:The analytical VaR (after risk adjustment) for dot is: 0.8563446982722507
+DEBUG:root:Total risk adjustment for dot used to compute the safe_mint threshold is: 1.0
+DEBUG:root:Partial historical VaR (before risk adjustment) for dot is: -0.17523401531410254
+DEBUG:root:The historical VaR (after risk adjustment) for dot is: 0.8247659846858975
+DEBUG:root:The summed increments for the analytical liquidation threshold are: 0.049941534067178384
+DEBUG:root:The summed increments for the historical liquidation threshold are: -0.012318880853702474
+DEBUG:root:The summed increments for the analytical premium_redeem threshold are: 0.1185906331775557
+DEBUG:root:The summed increments for the historical premium_redeem threshold are: 0.015464112640467209
+DEBUG:root:The summed increments for the analytical safe_mint threshold are: 0.262245934905305
+DEBUG:root:The summed increments for the historical safe_mint threshold are: 0.19069812795456975
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of dot/btc over 21 days is: 105.257%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of dot/btc over 21 days is: 98.783%
+INFO:root:The suggested liquidation threshold is 110%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of dot/btc over 14 days is: 113.455%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of dot/btc over 14 days is: 101.571%
+INFO:root:The suggested premium_redeem threshold is 115%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of dot/btc over 7 days is: 135.547%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of dot/btc over 7 days is: 123.563%
+INFO:root:The suggested safe_mint threshold is 140%
+INFO:root:Start analysing usdt...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/tether/market_chart?vs_currency=btc&days=365 HTTP/1.1" 200 None
+DEBUG:root:Total risk adjustment for usdt used to compute the liquidation threshold is: 1.0869565217391304
+DEBUG:root:Partial analytical VaR (before risk adjustment) for usdt is: -0.2509418003495064
+DEBUG:root:The analytical VaR (after risk adjustment) for usdt is: 0.6891335436784541
+DEBUG:root:Total risk adjustment for usdt used to compute the liquidation threshold is: 1.0869565217391304
+DEBUG:root:Partial historical VaR (before risk adjustment) for usdt is: -0.24233775743994845
+DEBUG:root:The historical VaR (after risk adjustment) for usdt is: 0.6970492631552475
+DEBUG:root:Total risk adjustment for usdt used to compute the premium_redeem threshold is: 1.0869565217391304
+DEBUG:root:Partial analytical VaR (before risk adjustment) for usdt is: -0.20300800823001042
+DEBUG:root:The analytical VaR (after risk adjustment) for usdt is: 0.7332326324283904
+DEBUG:root:Total risk adjustment for usdt used to compute the premium_redeem threshold is: 1.0869565217391304
+DEBUG:root:Partial historical VaR (before risk adjustment) for usdt is: -0.2203542420196981
+DEBUG:root:The historical VaR (after risk adjustment) for usdt is: 0.7172740973418777
+DEBUG:root:Total risk adjustment for usdt used to compute the safe_mint threshold is: 1.0869565217391304
+DEBUG:root:Partial analytical VaR (before risk adjustment) for usdt is: -0.13626731935476566
+DEBUG:root:The analytical VaR (after risk adjustment) for usdt is: 0.7946340661936157
+DEBUG:root:Total risk adjustment for usdt used to compute the safe_mint threshold is: 1.0869565217391304
+DEBUG:root:Partial historical VaR (before risk adjustment) for usdt is: -0.18597575768345564
+DEBUG:root:The historical VaR (after risk adjustment) for usdt is: 0.7489023029312208
+DEBUG:root:The summed increments for the analytical liquidation threshold are: 0.04409908874993629
+DEBUG:root:The summed increments for the historical liquidation threshold are: 0.020224834186630236
+DEBUG:root:The summed increments for the analytical premium_redeem threshold are: 0.10550052251516151
+DEBUG:root:The summed increments for the historical premium_redeem threshold are: 0.05185303977597333
+DEBUG:root:The summed increments for the analytical safe_mint threshold are: 0.31086645632154586
+DEBUG:root:The summed increments for the historical safe_mint threshold are: 0.3029507368447525
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of usdt/btc over 21 days is: 104.613%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of usdt/btc over 21 days is: 102.064%
+INFO:root:The suggested liquidation threshold is 105%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of usdt/btc over 14 days is: 111.794%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of usdt/btc over 14 days is: 105.469%
+INFO:root:The suggested premium_redeem threshold is 115%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of usdt/btc over 7 days is: 145.11%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of usdt/btc over 7 days is: 143.462%
+INFO:root:The suggested safe_mint threshold is 150%
+INFO:root:Start analysing usdc...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/usd-coin/market_chart?vs_currency=btc&days=365 HTTP/1.1" 200 None
+DEBUG:root:Total risk adjustment for usdc used to compute the liquidation threshold is: 1.1494252873563218
+DEBUG:root:Partial analytical VaR (before risk adjustment) for usdc is: -0.25175838938362494
+DEBUG:root:The analytical VaR (after risk adjustment) for usdc is: 0.6509702012362464
+DEBUG:root:Total risk adjustment for usdc used to compute the liquidation threshold is: 1.1494252873563218
+DEBUG:root:Partial historical VaR (before risk adjustment) for usdc is: -0.24280649052152992
+DEBUG:root:The historical VaR (after risk adjustment) for usdc is: 0.658758353246269
+DEBUG:root:Total risk adjustment for usdc used to compute the premium_redeem threshold is: 1.1494252873563218
+DEBUG:root:Partial analytical VaR (before risk adjustment) for usdc is: -0.203207626894224
+DEBUG:root:The analytical VaR (after risk adjustment) for usdc is: 0.6932093646020252
+DEBUG:root:Total risk adjustment for usdc used to compute the premium_redeem threshold is: 1.1494252873563218
+DEBUG:root:Partial historical VaR (before risk adjustment) for usdc is: -0.22114296804793554
+DEBUG:root:The historical VaR (after risk adjustment) for usdc is: 0.6776056177982961
+DEBUG:root:Total risk adjustment for usdc used to compute the safe_mint threshold is: 1.1494252873563218
+DEBUG:root:Partial analytical VaR (before risk adjustment) for usdc is: -0.13604217671659424
+DEBUG:root:The analytical VaR (after risk adjustment) for usdc is: 0.7516433062565631
+DEBUG:root:Total risk adjustment for usdc used to compute the safe_mint threshold is: 1.1494252873563218
+DEBUG:root:Partial historical VaR (before risk adjustment) for usdc is: -0.18824803090825137
+DEBUG:root:The historical VaR (after risk adjustment) for usdc is: 0.7062242131098213
+DEBUG:root:The summed increments for the analytical liquidation threshold are: 0.04223916336577882
+DEBUG:root:The summed increments for the historical liquidation threshold are: 0.01884726455202712
+DEBUG:root:The summed increments for the analytical premium_redeem threshold are: 0.10067310502031668
+DEBUG:root:The summed increments for the historical premium_redeem threshold are: 0.04746585986355234
+DEBUG:root:The summed increments for the analytical safe_mint threshold are: 0.3490297987637536
+DEBUG:root:The summed increments for the historical safe_mint threshold are: 0.34124164675373103
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of usdc/btc over 21 days is: 104.41%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of usdc/btc over 21 days is: 101.921%
+INFO:root:The suggested liquidation threshold is 105%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of usdc/btc over 14 days is: 111.194%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of usdc/btc over 14 days is: 104.983%
+INFO:root:The suggested premium_redeem threshold is 115%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of usdc/btc over 7 days is: 153.617%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of usdc/btc over 7 days is: 151.801%
+INFO:root:The suggested safe_mint threshold is 155%
+INFO:root:Start analysing glmr...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/moonbeam/market_chart?vs_currency=btc&days=365 HTTP/1.1" 200 None
+DEBUG:root:Total risk adjustment for glmr used to compute the liquidation threshold is: 1.0
+DEBUG:root:Partial analytical VaR (before risk adjustment) for glmr is: -0.4113497403142622
+DEBUG:root:The analytical VaR (after risk adjustment) for glmr is: 0.5886502596857378
+DEBUG:root:Total risk adjustment for glmr used to compute the liquidation threshold is: 1.0
+DEBUG:root:Partial historical VaR (before risk adjustment) for glmr is: -0.33129078810935
+DEBUG:root:The historical VaR (after risk adjustment) for glmr is: 0.66870921189065
+DEBUG:root:Total risk adjustment for glmr used to compute the premium_redeem threshold is: 1.0
+DEBUG:root:Partial analytical VaR (before risk adjustment) for glmr is: -0.3416796054372788
+DEBUG:root:The analytical VaR (after risk adjustment) for glmr is: 0.6583203945627212
+DEBUG:root:Total risk adjustment for glmr used to compute the premium_redeem threshold is: 1.0
+DEBUG:root:Partial historical VaR (before risk adjustment) for glmr is: -0.2977625642247137
+DEBUG:root:The historical VaR (after risk adjustment) for glmr is: 0.7022374357752863
+DEBUG:root:Total risk adjustment for glmr used to compute the safe_mint threshold is: 1.0
+DEBUG:root:Partial analytical VaR (before risk adjustment) for glmr is: -0.2415365583026159
+DEBUG:root:The analytical VaR (after risk adjustment) for glmr is: 0.7584634416973841
+DEBUG:root:Total risk adjustment for glmr used to compute the safe_mint threshold is: 1.0
+DEBUG:root:Partial historical VaR (before risk adjustment) for glmr is: -0.18804672789089627
+DEBUG:root:The historical VaR (after risk adjustment) for glmr is: 0.8119532721091037
+DEBUG:root:The summed increments for the analytical liquidation threshold are: 0.06967013487698337
+DEBUG:root:The summed increments for the historical liquidation threshold are: 0.03352822388463628
+DEBUG:root:The summed increments for the analytical premium_redeem threshold are: 0.1698131820116463
+DEBUG:root:The summed increments for the historical premium_redeem threshold are: 0.1432440602184537
+DEBUG:root:The summed increments for the analytical safe_mint threshold are: 0.4113497403142622
+DEBUG:root:The summed increments for the historical safe_mint threshold are: 0.33129078810935
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of glmr/btc over 21 days is: 107.489%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of glmr/btc over 21 days is: 103.469%
+INFO:root:The suggested liquidation threshold is 110%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of glmr/btc over 14 days is: 120.455%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of glmr/btc over 14 days is: 116.719%
+INFO:root:The suggested premium_redeem threshold is 125%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of glmr/btc over 7 days is: 169.88%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of glmr/btc over 7 days is: 149.542%
+INFO:root:The suggested safe_mint threshold is 170%
+INFO:root:Start analysing vdot...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/voucher-dot/market_chart?vs_currency=btc&days=365 HTTP/1.1" 200 None
+INFO:root:No sufficient historic prices for vdot/btc
+INFO:root:Trying to get prices for dot/btc as proxy pair
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/polkadot/market_chart?vs_currency=btc&days=365 HTTP/1.1" 200 None
+DEBUG:root:Total risk adjustment for vdot used to compute the liquidation threshold is: 1.0204081632653061
+DEBUG:root:Partial analytical VaR (before risk adjustment) for vdot is: -0.26045705208676917
+DEBUG:root:The analytical VaR (after risk adjustment) for vdot is: 0.7247520889549662
+DEBUG:root:Total risk adjustment for vdot used to compute the liquidation threshold is: 1.0204081632653061
+DEBUG:root:Partial historical VaR (before risk adjustment) for vdot is: -0.19069812795456975
+DEBUG:root:The historical VaR (after risk adjustment) for vdot is: 0.7931158346045216
+DEBUG:root:Total risk adjustment for vdot used to compute the premium_redeem threshold is: 1.0204081632653061
+DEBUG:root:Partial analytical VaR (before risk adjustment) for vdot is: -0.21078043421623882
+DEBUG:root:The analytical VaR (after risk adjustment) for vdot is: 0.773435174468086
+DEBUG:root:Total risk adjustment for vdot used to compute the premium_redeem threshold is: 1.0204081632653061
+DEBUG:root:Partial historical VaR (before risk adjustment) for vdot is: -0.20301700880827223
+DEBUG:root:The historical VaR (after risk adjustment) for vdot is: 0.7810433313678932
+DEBUG:root:Total risk adjustment for vdot used to compute the safe_mint threshold is: 1.0204081632653061
+DEBUG:root:Partial analytical VaR (before risk adjustment) for vdot is: -0.14275991033703606
+DEBUG:root:The analytical VaR (after risk adjustment) for vdot is: 0.8400952878697047
+DEBUG:root:Total risk adjustment for vdot used to compute the safe_mint threshold is: 1.0204081632653061
+DEBUG:root:Partial historical VaR (before risk adjustment) for vdot is: -0.17523401531410254
+DEBUG:root:The historical VaR (after risk adjustment) for vdot is: 0.8082706649921795
+DEBUG:root:The summed increments for the analytical liquidation threshold are: 0.04868308551311973
+DEBUG:root:The summed increments for the historical liquidation threshold are: -0.012072503236628451
+DEBUG:root:The summed increments for the analytical premium_redeem threshold are: 0.11534319891473843
+DEBUG:root:The summed increments for the historical premium_redeem threshold are: 0.015154830387657858
+DEBUG:root:The summed increments for the analytical safe_mint threshold are: 0.27524791104503377
+DEBUG:root:The summed increments for the historical safe_mint threshold are: 0.20688416539547838
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of vdot/btc over 21 days is: 105.117%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of vdot/btc over 21 days is: 98.807%
+INFO:root:The suggested liquidation threshold is 110%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of vdot/btc over 14 days is: 113.038%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of vdot/btc over 14 days is: 101.539%
+INFO:root:The suggested premium_redeem threshold is 115%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of vdot/btc over 7 days is: 137.978%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of vdot/btc over 7 days is: 126.085%
+INFO:root:The suggested safe_mint threshold is 140%
+INFO:root:Date of the analysis: 2024-02-09 14:50:25.282052
+INFO:root:====================================================================
+INFO:root:Start running the collateral analysis with the following parameters:
+INFO:root:
+    Debt currency:              usd
+    Confidence level (alpha):   99.0%
+    Number of path simulations: 100000
+    Historical sample period:   365
+    Threshold period in days:
+        Safe Mint:              21
+        Premium Redeem:         14
+        Liquidations:           7
+    
+INFO:root:====================================================================
+INFO:root:Start analysing ibtc...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/interlay-btc/market_chart?vs_currency=usd&days=365 HTTP/1.1" 404 None
+INFO:root:Error 'prices': could not get price data...
+INFO:root:No sufficient historic prices for ibtc/usd
+INFO:root:Trying to get prices for btc/usd as proxy pair
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+DEBUG:root:Total risk adjustment for ibtc used to compute the liquidation threshold is: 1.0526315789473684
+DEBUG:root:Partial analytical VaR (before risk adjustment) for ibtc is: -0.1972728805086028
+DEBUG:root:The analytical VaR (after risk adjustment) for ibtc is: 0.7625907635168274
+DEBUG:root:Total risk adjustment for ibtc used to compute the liquidation threshold is: 1.0526315789473684
+DEBUG:root:Partial historical VaR (before risk adjustment) for ibtc is: -0.1219354360875674
+DEBUG:root:The historical VaR (after risk adjustment) for ibtc is: 0.8341613357168111
+DEBUG:root:Total risk adjustment for ibtc used to compute the premium_redeem threshold is: 1.0526315789473684
+DEBUG:root:Partial analytical VaR (before risk adjustment) for ibtc is: -0.16566369774985035
+DEBUG:root:The analytical VaR (after risk adjustment) for ibtc is: 0.7926194871376422
+DEBUG:root:Total risk adjustment for ibtc used to compute the premium_redeem threshold is: 1.0526315789473684
+DEBUG:root:Partial historical VaR (before risk adjustment) for ibtc is: -0.1376693905265829
+DEBUG:root:The historical VaR (after risk adjustment) for ibtc is: 0.8192140789997463
+DEBUG:root:Total risk adjustment for ibtc used to compute the safe_mint threshold is: 1.0526315789473684
+DEBUG:root:Partial analytical VaR (before risk adjustment) for ibtc is: -0.11827150070073744
+DEBUG:root:The analytical VaR (after risk adjustment) for ibtc is: 0.8376420743342995
+DEBUG:root:Total risk adjustment for ibtc used to compute the safe_mint threshold is: 1.0526315789473684
+DEBUG:root:Partial historical VaR (before risk adjustment) for ibtc is: -0.11161616832518595
+DEBUG:root:The historical VaR (after risk adjustment) for ibtc is: 0.8439646400910734
+DEBUG:root:The summed increments for the analytical liquidation threshold are: 0.030028723620814768
+DEBUG:root:The summed increments for the historical liquidation threshold are: -0.01494725671706476
+DEBUG:root:The summed increments for the analytical premium_redeem threshold are: 0.07505131081747207
+DEBUG:root:The summed increments for the historical premium_redeem threshold are: 0.009803304374262356
+DEBUG:root:The summed increments for the analytical safe_mint threshold are: 0.23740923648317258
+DEBUG:root:The summed increments for the historical safe_mint threshold are: 0.16583866428318894
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of ibtc/usd over 21 days is: 103.096%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of ibtc/usd over 21 days is: 98.527%
+INFO:root:The suggested liquidation threshold is 105%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of ibtc/usd over 14 days is: 108.114%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of ibtc/usd over 14 days is: 100.99%
+INFO:root:The suggested premium_redeem threshold is 110%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of ibtc/usd over 7 days is: 131.132%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of ibtc/usd over 7 days is: 119.881%
+INFO:root:The suggested safe_mint threshold is 135%
+INFO:root:Start analysing dot...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/polkadot/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+DEBUG:root:Total risk adjustment for dot used to compute the liquidation threshold is: 1.0
+DEBUG:root:Partial analytical VaR (before risk adjustment) for dot is: -0.3034137208577893
+DEBUG:root:The analytical VaR (after risk adjustment) for dot is: 0.6965862791422107
+DEBUG:root:Total risk adjustment for dot used to compute the liquidation threshold is: 1.0
+DEBUG:root:Partial historical VaR (before risk adjustment) for dot is: -0.23834078409921966
+DEBUG:root:The historical VaR (after risk adjustment) for dot is: 0.7616592159007803
+DEBUG:root:Total risk adjustment for dot used to compute the premium_redeem threshold is: 1.0
+DEBUG:root:Partial analytical VaR (before risk adjustment) for dot is: -0.25263323276696303
+DEBUG:root:The analytical VaR (after risk adjustment) for dot is: 0.747366767233037
+DEBUG:root:Total risk adjustment for dot used to compute the premium_redeem threshold is: 1.0
+DEBUG:root:Partial historical VaR (before risk adjustment) for dot is: -0.21105438372879537
+DEBUG:root:The historical VaR (after risk adjustment) for dot is: 0.7889456162712046
+DEBUG:root:Total risk adjustment for dot used to compute the safe_mint threshold is: 1.0
+DEBUG:root:Partial analytical VaR (before risk adjustment) for dot is: -0.17827902357757308
+DEBUG:root:The analytical VaR (after risk adjustment) for dot is: 0.8217209764224269
+DEBUG:root:Total risk adjustment for dot used to compute the safe_mint threshold is: 1.0
+DEBUG:root:Partial historical VaR (before risk adjustment) for dot is: -0.15190361151510823
+DEBUG:root:The historical VaR (after risk adjustment) for dot is: 0.8480963884848918
+DEBUG:root:The summed increments for the analytical liquidation threshold are: 0.05078048809082625
+DEBUG:root:The summed increments for the historical liquidation threshold are: 0.02728640037042429
+DEBUG:root:The summed increments for the analytical premium_redeem threshold are: 0.1251346972802162
+DEBUG:root:The summed increments for the historical premium_redeem threshold are: 0.08643717258411143
+DEBUG:root:The summed increments for the analytical safe_mint threshold are: 0.3034137208577893
+DEBUG:root:The summed increments for the historical safe_mint threshold are: 0.23834078409921966
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of dot/usd over 21 days is: 105.35%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of dot/usd over 21 days is: 102.805%
+INFO:root:The suggested liquidation threshold is 110%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of dot/usd over 14 days is: 114.303%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of dot/usd over 14 days is: 109.462%
+INFO:root:The suggested premium_redeem threshold is 115%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of dot/usd over 7 days is: 143.557%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of dot/usd over 7 days is: 131.292%
+INFO:root:The suggested safe_mint threshold is 145%
+INFO:root:Start analysing usdt...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/tether/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+DEBUG:root:Total risk adjustment for usdt used to compute the liquidation threshold is: 1.0869565217391304
+DEBUG:root:Partial analytical VaR (before risk adjustment) for usdt is: -0.01318130198553924
+DEBUG:root:The analytical VaR (after risk adjustment) for usdt is: 0.9078732021733039
+DEBUG:root:Total risk adjustment for usdt used to compute the liquidation threshold is: 1.0869565217391304
+DEBUG:root:Partial historical VaR (before risk adjustment) for usdt is: -0.006322530539417892
+DEBUG:root:The historical VaR (after risk adjustment) for usdt is: 0.9141832719037356
+DEBUG:root:Total risk adjustment for usdt used to compute the premium_redeem threshold is: 1.0869565217391304
+DEBUG:root:Partial analytical VaR (before risk adjustment) for usdt is: -0.01050138770597342
+DEBUG:root:The analytical VaR (after risk adjustment) for usdt is: 0.9103387233105045
+DEBUG:root:Total risk adjustment for usdt used to compute the premium_redeem threshold is: 1.0869565217391304
+DEBUG:root:Partial historical VaR (before risk adjustment) for usdt is: -0.006270676776963469
+DEBUG:root:The historical VaR (after risk adjustment) for usdt is: 0.9142309773651937
+DEBUG:root:Total risk adjustment for usdt used to compute the safe_mint threshold is: 1.0869565217391304
+DEBUG:root:Partial analytical VaR (before risk adjustment) for usdt is: -0.006971585620129561
+DEBUG:root:The analytical VaR (after risk adjustment) for usdt is: 0.9135861412294809
+DEBUG:root:Total risk adjustment for usdt used to compute the safe_mint threshold is: 1.0869565217391304
+DEBUG:root:Partial historical VaR (before risk adjustment) for usdt is: -0.0058299370227856695
+DEBUG:root:The historical VaR (after risk adjustment) for usdt is: 0.9146364579390373
+DEBUG:root:The summed increments for the analytical liquidation threshold are: 0.0024655211372005548
+DEBUG:root:The summed increments for the historical liquidation threshold are: 4.770546145804744e-05
+DEBUG:root:The summed increments for the analytical premium_redeem threshold are: 0.00571293905617698
+DEBUG:root:The summed increments for the historical premium_redeem threshold are: 0.0004531860353016448
+DEBUG:root:The summed increments for the analytical safe_mint threshold are: 0.09212679782669608
+DEBUG:root:The summed increments for the historical safe_mint threshold are: 0.0858167280962644
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of usdt/usd over 21 days is: 100.247%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of usdt/usd over 21 days is: 100.005%
+INFO:root:The suggested liquidation threshold is 105%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of usdt/usd over 14 days is: 100.575%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of usdt/usd over 14 days is: 100.045%
+INFO:root:The suggested premium_redeem threshold is 105%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of usdt/usd over 7 days is: 110.148%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of usdt/usd over 7 days is: 109.387%
+INFO:root:The suggested safe_mint threshold is 115%
+INFO:root:Start analysing usdc...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/usd-coin/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+DEBUG:root:Total risk adjustment for usdc used to compute the liquidation threshold is: 1.1494252873563218
+DEBUG:root:Partial analytical VaR (before risk adjustment) for usdc is: -0.027186742160854482
+DEBUG:root:The analytical VaR (after risk adjustment) for usdc is: 0.8463475343200566
+DEBUG:root:Total risk adjustment for usdc used to compute the liquidation threshold is: 1.1494252873563218
+DEBUG:root:Partial historical VaR (before risk adjustment) for usdc is: -0.005525333207900385
+DEBUG:root:The historical VaR (after risk adjustment) for usdc is: 0.8651929601091267
+DEBUG:root:Total risk adjustment for usdc used to compute the premium_redeem threshold is: 1.1494252873563218
+DEBUG:root:Partial analytical VaR (before risk adjustment) for usdc is: -0.02180683189423882
+DEBUG:root:The analytical VaR (after risk adjustment) for usdc is: 0.8510280562520123
+DEBUG:root:Total risk adjustment for usdc used to compute the premium_redeem threshold is: 1.1494252873563218
+DEBUG:root:Partial historical VaR (before risk adjustment) for usdc is: -0.006506240094425464
+DEBUG:root:The historical VaR (after risk adjustment) for usdc is: 0.8643395711178499
+DEBUG:root:Total risk adjustment for usdc used to compute the safe_mint threshold is: 1.1494252873563218
+DEBUG:root:Partial analytical VaR (before risk adjustment) for usdc is: -0.014653268154430577
+DEBUG:root:The analytical VaR (after risk adjustment) for usdc is: 0.8572516567056454
+DEBUG:root:Total risk adjustment for usdc used to compute the safe_mint threshold is: 1.1494252873563218
+DEBUG:root:Partial historical VaR (before risk adjustment) for usdc is: -0.006003028282976608
+DEBUG:root:The historical VaR (after risk adjustment) for usdc is: 0.8647773653938104
+DEBUG:root:The summed increments for the analytical liquidation threshold are: 0.004680521931955672
+DEBUG:root:The summed increments for the historical liquidation threshold are: -0.0008533889912768489
+DEBUG:root:The summed increments for the analytical premium_redeem threshold are: 0.0109041223855888
+DEBUG:root:The summed increments for the historical premium_redeem threshold are: -0.0004155947153162698
+DEBUG:root:The summed increments for the analytical safe_mint threshold are: 0.1536524656799434
+DEBUG:root:The summed increments for the historical safe_mint threshold are: 0.13480703989087328
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of usdc/usd over 21 days is: 100.47%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of usdc/usd over 21 days is: 99.915%
+INFO:root:The suggested liquidation threshold is 105%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of usdc/usd over 14 days is: 101.102%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of usdc/usd over 14 days is: 99.958%
+INFO:root:The suggested premium_redeem threshold is 105%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of usdc/usd over 7 days is: 118.155%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of usdc/usd over 7 days is: 115.581%
+INFO:root:The suggested safe_mint threshold is 120%
+INFO:root:Start analysing glmr...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/moonbeam/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+DEBUG:root:Total risk adjustment for glmr used to compute the liquidation threshold is: 1.0
+DEBUG:root:Partial analytical VaR (before risk adjustment) for glmr is: -0.4284722923730717
+DEBUG:root:The analytical VaR (after risk adjustment) for glmr is: 0.5715277076269283
+DEBUG:root:Total risk adjustment for glmr used to compute the liquidation threshold is: 1.0
+DEBUG:root:Partial historical VaR (before risk adjustment) for glmr is: -0.2887892113754589
+DEBUG:root:The historical VaR (after risk adjustment) for glmr is: 0.7112107886245411
+DEBUG:root:Total risk adjustment for glmr used to compute the premium_redeem threshold is: 1.0
+DEBUG:root:Partial analytical VaR (before risk adjustment) for glmr is: -0.3605377618932024
+DEBUG:root:The analytical VaR (after risk adjustment) for glmr is: 0.6394622381067976
+DEBUG:root:Total risk adjustment for glmr used to compute the premium_redeem threshold is: 1.0
+DEBUG:root:Partial historical VaR (before risk adjustment) for glmr is: -0.26803352498190436
+DEBUG:root:The historical VaR (after risk adjustment) for glmr is: 0.7319664750180956
+DEBUG:root:Total risk adjustment for glmr used to compute the safe_mint threshold is: 1.0
+DEBUG:root:Partial analytical VaR (before risk adjustment) for glmr is: -0.25824770716272405
+DEBUG:root:The analytical VaR (after risk adjustment) for glmr is: 0.741752292837276
+DEBUG:root:Total risk adjustment for glmr used to compute the safe_mint threshold is: 1.0
+DEBUG:root:Partial historical VaR (before risk adjustment) for glmr is: -0.1880187287878099
+DEBUG:root:The historical VaR (after risk adjustment) for glmr is: 0.8119812712121901
+DEBUG:root:The summed increments for the analytical liquidation threshold are: 0.0679345304798693
+DEBUG:root:The summed increments for the historical liquidation threshold are: 0.020755686393554518
+DEBUG:root:The summed increments for the analytical premium_redeem threshold are: 0.17022458521034767
+DEBUG:root:The summed increments for the historical premium_redeem threshold are: 0.10077048258764898
+DEBUG:root:The summed increments for the analytical safe_mint threshold are: 0.4284722923730717
+DEBUG:root:The summed increments for the historical safe_mint threshold are: 0.2887892113754589
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of glmr/usd over 21 days is: 107.289%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of glmr/usd over 21 days is: 102.12%
+INFO:root:The suggested liquidation threshold is 110%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of glmr/usd over 14 days is: 120.515%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of glmr/usd over 14 days is: 111.206%
+INFO:root:The suggested premium_redeem threshold is 125%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of glmr/usd over 7 days is: 174.97%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of glmr/usd over 7 days is: 140.605%
+INFO:root:The suggested safe_mint threshold is 175%
+INFO:root:Start analysing vdot...
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/voucher-dot/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+INFO:root:No sufficient historic prices for vdot/usd
+INFO:root:Trying to get prices for dot/usd as proxy pair
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): api.coingecko.com:443
+DEBUG:urllib3.connectionpool:https://api.coingecko.com:443 "GET /api/v3/coins/polkadot/market_chart?vs_currency=usd&days=365 HTTP/1.1" 200 None
+DEBUG:root:Total risk adjustment for vdot used to compute the liquidation threshold is: 1.0204081632653061
+DEBUG:root:Partial analytical VaR (before risk adjustment) for vdot is: -0.30516226580182426
+DEBUG:root:The analytical VaR (after risk adjustment) for vdot is: 0.6809409795142122
+DEBUG:root:Total risk adjustment for vdot used to compute the liquidation threshold is: 1.0204081632653061
+DEBUG:root:Partial historical VaR (before risk adjustment) for vdot is: -0.23834078409921966
+DEBUG:root:The historical VaR (after risk adjustment) for vdot is: 0.7464260315827648
+DEBUG:root:Total risk adjustment for vdot used to compute the premium_redeem threshold is: 1.0204081632653061
+DEBUG:root:Partial analytical VaR (before risk adjustment) for vdot is: -0.25430051731424075
+DEBUG:root:The analytical VaR (after risk adjustment) for vdot is: 0.7307854930320441
+DEBUG:root:Total risk adjustment for vdot used to compute the premium_redeem threshold is: 1.0204081632653061
+DEBUG:root:Partial historical VaR (before risk adjustment) for vdot is: -0.21105438372879537
+DEBUG:root:The historical VaR (after risk adjustment) for vdot is: 0.7731667039457806
+DEBUG:root:Total risk adjustment for vdot used to compute the safe_mint threshold is: 1.0204081632653061
+DEBUG:root:Partial analytical VaR (before risk adjustment) for vdot is: -0.17858698507341897
+DEBUG:root:The analytical VaR (after risk adjustment) for vdot is: 0.8049847546280494
+DEBUG:root:Total risk adjustment for vdot used to compute the safe_mint threshold is: 1.0204081632653061
+DEBUG:root:Partial historical VaR (before risk adjustment) for vdot is: -0.15190361151510823
+DEBUG:root:The historical VaR (after risk adjustment) for vdot is: 0.8311344607151939
+DEBUG:root:The summed increments for the analytical liquidation threshold are: 0.04984451351783192
+DEBUG:root:The summed increments for the historical liquidation threshold are: 0.026740672363015805
+DEBUG:root:The summed increments for the analytical premium_redeem threshold are: 0.12404377511383724
+DEBUG:root:The summed increments for the historical premium_redeem threshold are: 0.08470842913242915
+DEBUG:root:The summed increments for the analytical safe_mint threshold are: 0.3190590204857878
+DEBUG:root:The summed increments for the historical safe_mint threshold are: 0.25357396841723523
+DEBUG:root:The liquidation threshold based on the analytical VaR for a confidence level of 99.0% of vdot/usd over 21 days is: 105.246%
+DEBUG:root:The liquidation threshold based on the historic VaR for a confidence level of 99.0% of vdot/usd over 21 days is: 102.748%
+INFO:root:The suggested liquidation threshold is 110%
+DEBUG:root:The premium_redeem threshold based on the analytical VaR for a confidence level of 99.0% of vdot/usd over 14 days is: 114.161%
+DEBUG:root:The premium_redeem threshold based on the historic VaR for a confidence level of 99.0% of vdot/usd over 14 days is: 109.255%
+INFO:root:The suggested premium_redeem threshold is 115%
+DEBUG:root:The safe_mint threshold based on the analytical VaR for a confidence level of 99.0% of vdot/usd over 7 days is: 146.856%
+DEBUG:root:The safe_mint threshold based on the historic VaR for a confidence level of 99.0% of vdot/usd over 7 days is: 133.972%
+INFO:root:The suggested safe_mint threshold is 150%

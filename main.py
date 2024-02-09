@@ -12,7 +12,7 @@ with open("config.yaml") as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
 
 NETWORK = "polkadot"  # select between kusama and polkadot
-DEBT = "btc"  # select usd for lending market and btc for vaults
+DEBT = "usd"  # select usd for lending market and btc for vaults
 
 
 ALPHA = config["analysis"]["alpha"]

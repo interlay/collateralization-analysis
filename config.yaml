@@ -37,7 +37,7 @@ collateral:
       risk_adjustment:
         liquidity_adjustment:
         depeg_adjustment: 0.13
-      supply_cap: 200_000
+      supply_cap: 2_000_000
     glmr: 
       name: "moonbeam"
       risk_adjustment:

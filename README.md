@@ -37,7 +37,7 @@ To run all of the implemented analysis:
 python main.py
 ```
 This will print the results in stdout and create a more detailed `analysis.log` file with the results and parameters used in the simulation.
-
+For adding other currencies or switching between estimating thresholds for bridge or lending market, please see the implementation section below.
 
 To run any unit tests
 
@@ -52,7 +52,7 @@ The `main.py` file can be found in the root directory and run as is.
 Current implementations in `main.py` include:
 
 **Polkadot**
-1.iBTC
+1. iBTC
 2. DOT
 3. USDT
 4. GLMR
@@ -88,11 +88,16 @@ collateral:
     dot: # coingecko ticker of the token to be analyzed
       name: "polkadot" # coingecko API id of that token
       risk_adjustment:
-        liquidity_adjustment: # optional: slippage as decimal for the trade of given size
+        liquidity_adjustment: # optional: slippage as decimal for the trade of given size. Should account for slippage when trading 10% of the supply_cap.
         depeg_adjustment: # optional: e.g. max historic depeg of that asset or comparable asset
+      supply_cap: # optional: does not impact the results but should be in relation to the liquidity_adjustment
 ```
+Note: It is suggested that stable coins do not get a liqudity adjustment in the current implementation, because it is assumed that the liquidator settles in USD and does not have to swap stable coins.
 
 In `main.py` you can determine the `NETWORK` (Polkadot or Kusama) for which you want to run the analysis as well as the `DEBT`currency (Bitcoin or USD).
+To analyse the thresholds for the bridge, set `DEBT='BTC'`, for the lending market, set `DEBT='USD`. 
+
+TODO: Add support for command line arguments to change parameters such as `DEBT`
 
 # Package
 
