@@ -52,6 +52,14 @@ collateral:
         liquidity_adjustment: 0.02
         depeg_adjustment:
       supply_cap: 500_000
+    stdot: 
+      name: "stellaswap-staked-dot"
+      proxy:
+        dot: "polkadot"
+      risk_adjustment:
+        liquidity_adjustment: 0.02
+        depeg_adjustment:
+      supply_cap: 300_000
   kusama:
     kbtc:
       name: "kintsugi-btc"
