@@ -30,7 +30,7 @@ collateral:
       name: "hydradx"
       risk_adjustment:
         liquidity_adjustment: 0.02
-        depeg_adjustment: 0.02 # depeg of HDX/USD pair on kraken
+        depeg_adjustment: 0
       supply_cap: 10_000_000
     usdt:
       name: "tether"
