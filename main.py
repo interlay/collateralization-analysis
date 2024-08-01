@@ -2,11 +2,15 @@
 import yaml
 from data.data_request import Token, Token_Pair
 from analysis.analysis import Analysis
+from data.hydration_request import Hydration_Token, Stableswap_Pair
 from simulation.simulation import Simulation
 from datetime import datetime, timedelta
 from helper.helper import round_up_to_nearest_5, get_total_risk_adjustment, print_banner
 import logging
 import sys
+
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 with open("config.yaml") as f:
     config = yaml.load(f, Loader=yaml.FullLoader)
@@ -46,6 +50,18 @@ logging.info(
         Liquidations:           {PERIODS["safe_mint"]}
     """
 )
+logging.info("====================================================================")
+
+# We get the current market conditions to see if the iBTC
+# price is skewed from par.
+
+ibtc_token = Hydration_Token("iBTC", 11, 8)
+wbtc_token = Hydration_Token("wBTC", 19, 8)
+stableswap_pair = Stableswap_Pair(wbtc_token, ibtc_token, "7MaKPwwnqN4cqg35PbxsGXUo1dfvjXQ3XfBjWF9UVvKMjJj8", 5, 0.0004, 0.0001)
+ibtc_premium = (stableswap_pair.get_price() - 1) * 100
+logging.debug(
+        f"Current market conditions on Hydration show a {ibtc_token.name} premium of {round(ibtc_premium, 3)} over {wbtc_token.name}"
+    )
 logging.info("====================================================================")
 
 for ticker, token in config["collateral"][NETWORK].items():
@@ -206,7 +222,7 @@ for ticker, token in config["collateral"][NETWORK].items():
 
     for key, value in thresholds.items():
         rounded_threshold = round_up_to_nearest_5(
-            max(thresholds[key]["analytical"], thresholds[key]["historical"]) * 100
+            max(thresholds[key]["analytical"], thresholds[key]["historical"]) * 100 + max(0, ibtc_premium)
         )
 
         logging.debug(

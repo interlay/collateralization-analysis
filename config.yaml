@@ -1,7 +1,7 @@
 analysis:
   alpha: 0.99
   n_simulations: 100_000
-  historical_sample_period: 365
+  historical_sample_period: 180
   thresholds:
     periods:
       liquidation: 21
@@ -12,14 +12,6 @@ debt:
   usd: "dollar"
 collateral:
   polkadot:
-    ibtc:
-      name: "interlay-btc"
-      proxy:
-        btc: "bitcoin"
-      risk_adjustment:
-        liquidity_adjustment: 0.05
-        depeg_adjustment: 0
-      supply_cap: 30
     dot: 
       name: "polkadot"
       risk_adjustment:
@@ -32,18 +24,24 @@ collateral:
         liquidity_adjustment:
         depeg_adjustment: 0.08
       supply_cap: 2_000_000
+    qusdt:
+      name: "tether"
+      risk_adjustment:
+        liquidity_adjustment: 0.04
+        depeg_adjustment: 0.08
+      supply_cap: 1_752_709
     usdc:
       name: "usd-coin"
       risk_adjustment:
         liquidity_adjustment:
         depeg_adjustment: 0.13
       supply_cap: 2_000_000
-    glmr: 
-      name: "moonbeam"
+    qusdc:
+      name: "usd-coin"
       risk_adjustment:
-        liquidity_adjustment: 
-        depeg_adjustment:
-      supply_cap:
+        liquidity_adjustment: 0.04
+        depeg_adjustment: 0.13
+      supply_cap: 1_629_812
     vdot: 
       name: "voucher-dot"
       proxy:
@@ -51,7 +49,7 @@ collateral:
       risk_adjustment:
         liquidity_adjustment: 0.02
         depeg_adjustment:
-      supply_cap: 500_000
+      supply_cap: 1_500_000
   kusama:
     kbtc:
       name: "kintsugi-btc"

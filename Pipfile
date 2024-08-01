@@ -12,6 +12,7 @@ numpy = "*"
 pytest = "*"
 repackage = "*"
 PyYAML = "*"
+substrate-interfaces = "*"
 
 [dev-packages]
 ipykernel = "*"
