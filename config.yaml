@@ -26,6 +26,12 @@ collateral:
         liquidity_adjustment: 0
         depeg_adjustment: 0
       supply_cap: 2_450_000
+    hdx: 
+      name: "hydradx"
+      risk_adjustment:
+        liquidity_adjustment: 0.02
+        depeg_adjustment: 0
+      supply_cap: 10_000_000
     usdt:
       name: "tether"
       risk_adjustment:
